@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Integrated ISL Communication System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --primary-light: #34495e;
+      --accent: #3498db;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --text-dark: #2c3e50;
+      --text-light: #ecf0f1;
+      --bg-main: #ecf0f1;
+      --bg-card: #ffffff;
+      --border-color: #bdc3c7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: var(--bg-main);
+      min-height: 100vh;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      padding: 1rem;
+      text-align: center;
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+    }
+
+    .header h2 {
+      color: var(--text-light);
+      font-size: 1.8rem;
+      margin-bottom: 0.3rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .header p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .mode-selector {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .mode-btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      background: var(--bg-card);
+      color: var(--text-dark);
+      border: 2px solid var(--border-color);
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: var(--text-light);
+      border-color: var(--accent);
+    }
+
+    .mode-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #container {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+      width: 98%;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      padding: 1rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
+      height: calc(100vh - 180px);
+    }
+
+    .module {
+      display: none;
+      width: 100%;
+    }
+
+    .module.active {
+      display: flex;
+    }
+
+    /* Sign-to-Speech Module Styles */
+    .sign-to-speech {
+      gap: 1rem;
+    }
+
+    .video-container {
+      flex: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    video {
+      width: auto;
+      max-width: 100%;
+      height: calc(100vh - 280px);
+      border-radius: 10px;
+      border: 3px solid var(--primary);
+      background: #000;
+      object-fit: contain;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .start-btn {
+      background: var(--accent);
+      color: var(--text-light);
+      flex: 2;
+      font-weight: 600;
+    }
+
+    .abort-btn {
+      background: var(--danger);
+      color: var(--text-light);
+      flex: 1;
+      font-weight: 600;
+    }
+
+    .start-btn:hover {
+      background: var(--primary);
+    }
+
+    .abort-btn:hover {
+      background: #c0392b;
+    }
+
+    button:disabled {
+      background: var(--border-color);
+      opacity: 0.7;
+      font-weight: 400;
+      cursor: not-allowed;
+    }
+
+    #result {
+      padding: 0.8rem;
+      border-radius: 8px;
+      background: var(--bg-main);
+      min-height: 2.5rem;
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      color: var(--text-dark);
+      border-left: 4px solid var(--accent);
+    }
+
+    #prediction-log {
+      width: 280px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    #prediction-log h3 {
+      color: var(--primary);
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.4rem;
+    }
+
+    #log-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    #log-content::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #log-content::-webkit-scrollbar-track {
+      background: var(--bg-main);
+    }
+
+    #log-content::-webkit-scrollbar-thumb {
+      background: var(--accent);
+    }
+
+    .log-entry {
+      margin-bottom: 0.8rem;
+      padding: 0.6rem;
+      background: var(--bg-main);
+      border-radius: 6px;
+      border-left: 4px solid var(--primary);
+      font-size: 0.85rem;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .log-entry:hover {
+      transform: translateX(5px);
+      border-left-color: var(--accent);
+    }
+
+    .log-entry.sentence {
+      border-left-color: var(--success);
+      background: #f0faf0;
+      color: var(--success);
+    }
+
+    #tts-audio {
+      width: 100%;
+      height: 35px;
+      border-radius: 8px;
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Speech-to-Sign Module Styles */
+    .speech-to-sign {
+      gap: 1rem;
+    }
+
+    .speech-input-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .input-section {
+      background: var(--bg-main);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .input-section h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .input-methods {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .input-method {
+      flex: 1;
+      padding: 1rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .input-method.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--text-light);
+    }
+
+    .input-method:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #text-input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+
+    #text-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .record-btn {
+      background: var(--danger);
+      color: var(--text-light);
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .record-btn.recording {
+      background: var(--warning);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+    }
+
+    .avatar-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .avatar-display {
+      flex: 1;
+      background: var(--bg-main);
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 400px;
+    }
+
+    #avatar-canvas {
+      border-radius: 8px;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .avatar-controls {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .translate-btn {
+      background: var(--success);
+      color: var(--text-light);
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .translate-btn:hover {
+      background: #229954;
+    }
+
+    .isl-sequence {
+      background: var(--bg-main);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+      margin-top: 1rem;
+    }
+
+    .isl-sequence h4 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .sequence-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .sequence-item {
+      background: var(--accent);
+      color: var(--text-light);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-indicator.status-active {
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.status-recording {
+      background: var(--danger);
+      animation: pulse 1s infinite;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2>Integrated ISL Communication System</h2>
+    <p>Real-Time Bidirectional Communication for Indian Sign Language</p>
+  </div>
+
+  <div class="mode-selector">
+    <button class="mode-btn active" onclick="switchMode('sign-to-speech')">
+      🤟 Sign-to-Speech
+    </button>
+    <button class="mode-btn" onclick="switchMode('speech-to-sign')">
+      🗣️ Speech-to-Sign
+    </button>
+  </div>
+
+  <div id="container">
+    <!-- Sign-to-Speech Module -->
+    <div id="sign-to-speech" class="module sign-to-speech active">
+      <div class="video-container">
+        <video id="video" autoplay></video>
+        <div class="controls">
+          <button id="start-btn" class="start-btn">
+            <span class="status-indicator"></span>
+            Start Recognition
+          </button>
+          <button id="abort-btn" class="abort-btn" disabled>Stop</button>
+        </div>
+        <div id="result"></div>
+        <audio id="tts-audio" controls style="display: none;"></audio>
+      </div>
+
+      <div id="prediction-log">
+        <h3>Recognition History</h3>
+        <div id="log-content"></div>
+      </div>
+    </div>
+
+    <!-- Speech-to-Sign Module -->
+    <div id="speech-to-sign" class="module speech-to-sign">
+      <div class="speech-input-container">
+        <div class="input-section">
+          <h3>Input Method</h3>
+          <div class="input-methods">
+            <div class="input-method active" onclick="selectInputMethod('text')">
+              📝 Text Input
+            </div>
+            <div class="input-method" onclick="selectInputMethod('speech')">
+              🎤 Voice Input
+            </div>
+          </div>
+          
+          <div id="text-input-section">
+            <textarea id="text-input" placeholder="Enter text to translate to Indian Sign Language..."></textarea>
+          </div>
+          
+          <div id="speech-input-section" class="hidden">
+            <button id="record-btn" class="record-btn" onclick="toggleRecording()">
+              <span class="status-indicator"></span>
+              Start Recording
+            </button>
+            <div id="speech-result" style="margin-top: 1rem; padding: 0.8rem; background: var(--bg-card); border-radius: 8px; display: none;">
+              <strong>Recognized:</strong> <span id="recognized-text"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-section">
+          <button class="translate-btn" onclick="translateToISL()">
+            🔄 Translate to ISL
+          </button>
+          
+          <div id="isl-sequence" class="isl-sequence hidden">
+            <h4>ISL Sequence:</h4>
+            <div id="sequence-items" class="sequence-items"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="avatar-container">
+        <div class="avatar-display">
+          <canvas id="avatar-canvas" width="500" height="500"></canvas>
+          <div id="current-sign-display" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600; display: none;"></div>
+        </div>
+        <div class="avatar-controls">
+          <button id="play-animation-btn" class="translate-btn" onclick="playAnimation()" disabled>
+            ▶️ Play Animation
+          </button>
+          <button id="stop-animation-btn" class="abort-btn" onclick="stopAnimation()" disabled>
+            ⏹️ Stop
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Mode switching
+  let currentMode = 'sign-to-speech';
+  let currentInputMethod = 'text';
+  let isRecording = false;
+  let recognition = null;
+  let animationFrames = [];
+  let animationTimer = null;
+  let currentFrame = 0;
+  let currentSignIndex = 0;
+  let islSequence = [];
+
+  function switchMode(mode) {
+    currentMode = mode;
+    
+    // Update mode buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Update modules
+    document.querySelectorAll('.module').forEach(module => {
+      module.classList.remove('active');
+    });
+    document.getElementById(mode).classList.add('active');
+    
+    // Stop any ongoing processes
+    if (mode === 'sign-to-speech') {
+      stopRecording();
+      stopAnimation();
+    } else {
+      abortRequested = true;
+      stopAnimation();
+    }
+  }
+
+  function selectInputMethod(method) {
+    currentInputMethod = method;
+    
+    // Update input method buttons
+    document.querySelectorAll('.input-method').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Show/hide input sections
+    if (method === 'text') {
+      document.getElementById('text-input-section').classList.remove('hidden');
+      document.getElementById('speech-input-section').classList.add('hidden');
+    } else {
+      document.getElementById('text-input-section').classList.add('hidden');
+      document.getElementById('speech-input-section').classList.remove('hidden');
+    }
+  }
+
+  // Speech recognition setup
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById('recognized-text').textContent = transcript;
+      document.getElementById('speech-result').style.display = 'block';
+      document.getElementById('text-input').value = transcript;
+      // Auto-translate after voice recognition
+      translateToISL();
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      alert('Speech recognition error: ' + event.error);
+      stopRecording();
+    };
+
+    recognition.onend = function() {
+      stopRecording();
+    };
+  }
+
+  function toggleRecording() {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  }
+
+  function startRecording() {
+    if (!recognition) {
+      alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    isRecording = true;
+    const recordBtn = document.getElementById('record-btn');
+    recordBtn.classList.add('recording');
+    recordBtn.innerHTML = '<span class="status-indicator status-recording"></span>Stop Recording';
+    
+    recognition.start();
+  }
+
+  function stopRecording() {
+    if (recognition && isRecording) {
+      recognition.stop();
+    }
+    
+    isRecording = false;
+    const recordBtn = document.getElementById('record-btn');
+    recordBtn.classList.remove('recording');
+    recordBtn.innerHTML = '<span class="status-indicator"></span>Start Recording';
+  }
+
+  async function translateToISL() {
+    const text = document.getElementById('text-input').value.trim();
+    
+    if (!text) {
+      alert('Please enter text or speak to translate.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/translate_to_isl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+      });
+
+      const data = await response.json();
+      
+      if (data.isl_sequence && data.isl_sequence.length > 0) {
+        // Store ISL sequence
+        islSequence = data.isl_sequence;
+        
+        // Display ISL sequence
+        const sequenceDiv = document.getElementById('isl-sequence');
+        const itemsDiv = document.getElementById('sequence-items');
+        
+        itemsDiv.innerHTML = '';
+        data.isl_sequence.forEach((sign, index) => {
+          const item = document.createElement('div');
+          item.className = 'sequence-item';
+          item.id = `sign-item-${index}`;
+          item.textContent = sign;
+          itemsDiv.appendChild(item);
+        });
+        
+        sequenceDiv.classList.remove('hidden');
+        
+        // Store animation frames
+        animationFrames = data.animation_frames || [];
+        currentSignIndex = 0;
+        
+        // Enable play button
+        document.getElementById('play-animation-btn').disabled = false;
+        
+        // Draw initial state
+        initializeCanvas();
+      } else {
+        alert('No matching signs found for the input text.');
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+      alert('Translation error: ' + error.message);
+    }
+  }
+
+  function initializeCanvas() {
+    const canvas = document.getElementById('avatar-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw initial avatar
+    drawAvatarBody(ctx);
+  }
+
+  function playAnimation() {
+    if (animationFrames.length === 0 && islSequence.length === 0) {
+      alert('No animation to play. Please translate some text first.');
+      return;
+    }
+
+    currentFrame = 0;
+    currentSignIndex = 0;
+    document.getElementById('play-animation-btn').disabled = true;
+    document.getElementById('stop-animation-btn').disabled = false;
+    document.getElementById('current-sign-display').style.display = 'block';
+    
+    // Highlight first sign
+    highlightCurrentSign(0);
+    
+    animateFrame();
+  }
+
+  function highlightCurrentSign(index) {
+    // Remove highlight from all signs
+    document.querySelectorAll('.sequence-item').forEach(item => {
+      item.style.background = 'var(--accent)';
+      item.style.transform = 'scale(1)';
+    });
+    
+    // Highlight current sign
+    const currentItem = document.getElementById(`sign-item-${index}`);
+    if (currentItem) {
+      currentItem.style.background = 'var(--success)';
+      currentItem.style.transform = 'scale(1.2)';
+    }
+  }
+
+  function animateFrame() {
+    if (currentFrame >= animationFrames.length) {
+      stopAnimation();
+      return;
+    }
+
+    const frame = animationFrames[currentFrame];
+    
+    // Update current sign display
+    document.getElementById('current-sign-display').textContent = frame.sign;
+    
+    // Find current sign index and highlight
+    const signIndex = islSequence.indexOf(frame.sign);
+    if (signIndex !== -1 && signIndex !== currentSignIndex) {
+      currentSignIndex = signIndex;
+      highlightCurrentSign(signIndex);
+    }
+    
+    drawAvatarWithHands(frame);
+    
+    currentFrame++;
+    animationTimer = setTimeout(animateFrame, 1000 / 30); // 30 FPS
+  }
+
+  function stopAnimation() {
+    if (animationTimer) {
+      clearTimeout(animationTimer);
+      animationTimer = null;
+    }
+    
+    document.getElementById('play-animation-btn').disabled = false;
+    document.getElementById('stop-animation-btn').disabled = true;
+    document.getElementById('current-sign-display').style.display = 'none';
+    
+    // Reset sign highlights
+    document.querySelectorAll('.sequence-item').forEach(item => {
+      item.style.background = 'var(--accent)';
+      item.style.transform = 'scale(1)';
+    });
+    
+    // Redraw initial state
+    initializeCanvas();
+  }
+
+  function drawAvatarWithHands(frame) {
+    const canvas = document.getElementById('avatar-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw avatar body first
+    drawAvatarBody(ctx);
+    
+    // Draw hands using keypoint data from backend
+    if (frame.right_hand && frame.right_hand.keypoints) {
+      drawHandFromKeypoints(ctx, frame.right_hand.keypoints, frame.right_hand.connections, 'right');
+    }
+    
+    if (frame.left_hand && frame.left_hand.keypoints) {
+      drawHandFromKeypoints(ctx, frame.left_hand.keypoints, frame.left_hand.connections, 'left');
+    }
+    
+    // Draw facial expression
+    if (frame.facial_expression) {
+      drawFacialExpressionFromData(ctx, frame.facial_expression);
+    }
+  }
+
+  // Draw hand using 21 keypoint landmarks (MediaPipe format)
+  function drawHandFromKeypoints(ctx, keypoints, connections, side) {
+    if (!keypoints || keypoints.length < 21) return;
+    
+    const canvasWidth = 500;
+    const canvasHeight = 500;
+    
+    // Convert normalized coordinates to canvas coordinates
+    const points = keypoints.map(kp => ({
+      x: kp.x * canvasWidth,
+      y: kp.y * canvasHeight,
+      z: kp.z || 0
+    }));
+    
+    // Default connections if not provided
+    const defaultConnections = [
+      [0, 1], [1, 2], [2, 3], [3, 4],           // Thumb
+      [0, 5], [5, 6], [6, 7], [7, 8],           // Index
+      [0, 9], [9, 10], [10, 11], [11, 12],      // Middle
+      [0, 13], [13, 14], [14, 15], [15, 16],    // Ring
+      [0, 17], [17, 18], [18, 19], [19, 20],    // Pinky
+      [5, 9], [9, 13], [13, 17]                  // Palm
+    ];
+    
+    const conns = connections || defaultConnections;
+    
+    // Draw palm fill
+    ctx.fillStyle = 'rgba(255, 218, 185, 0.9)';
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.lineTo(points[5].x, points[5].y);
+    ctx.lineTo(points[9].x, points[9].y);
+    ctx.lineTo(points[13].x, points[13].y);
+    ctx.lineTo(points[17].x, points[17].y);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw connections (finger bones)
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    conns.forEach(conn => {
+      const [i, j] = conn;
+      if (points[i] && points[j]) {
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[j].x, points[j].y);
+        ctx.stroke();
+      }
+    });
+    
+    // Draw finger segments with fill
+    ctx.fillStyle = '#FFDAB9';
+    ctx.strokeStyle = '#c9a080';
+    ctx.lineWidth = 2;
+    
+    // Draw each finger as connected segments
+    const fingerGroups = [
+      [0, 1, 2, 3, 4],      // Thumb
+      [0, 5, 6, 7, 8],      // Index
+      [0, 9, 10, 11, 12],   // Middle
+      [0, 13, 14, 15, 16],  // Ring
+      [0, 17, 18, 19, 20]   // Pinky
+    ];
+    
+    fingerGroups.forEach((finger, fingerIdx) => {
+      for (let i = 1; i < finger.length; i++) {
+        const p1 = points[finger[i-1]];
+        const p2 = points[finger[i]];
+        if (p1 && p2) {
+          // Draw finger segment
+          const width = fingerIdx === 0 ? 10 : 8 - i; // Thumb thicker, tapers
+          drawFingerSegment(ctx, p1, p2, Math.max(4, width));
+        }
+      }
+    });
+    
+    // Draw joints
+    ctx.fillStyle = '#e8c4a0';
+    points.forEach((point, idx) => {
+      const radius = idx === 0 ? 6 : (idx % 4 === 0 ? 4 : 3); // Wrist larger, tips medium
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = '#c9a080';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+    
+    // Draw fingernails on tips
+    const tipIndices = [4, 8, 12, 16, 20];
+    ctx.fillStyle = '#FFE4C4';
+    tipIndices.forEach(tipIdx => {
+      if (points[tipIdx]) {
+        const prevIdx = tipIdx - 1;
+        const tip = points[tipIdx];
+        const prev = points[prevIdx];
+        // Calculate nail direction
+        const angle = Math.atan2(tip.y - prev.y, tip.x - prev.x);
+        ctx.save();
+        ctx.translate(tip.x, tip.y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.ellipse(3, 0, 4, 3, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+      }
+    });
+  }
+  
+  function drawFingerSegment(ctx, p1, p2, width) {
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    const perpAngle = angle + Math.PI / 2;
+    
+    const dx = Math.cos(perpAngle) * width / 2;
+    const dy = Math.sin(perpAngle) * width / 2;
+    
+    ctx.fillStyle = '#FFDAB9';
+    ctx.beginPath();
+    ctx.moveTo(p1.x - dx, p1.y - dy);
+    ctx.lineTo(p2.x - dx * 0.8, p2.y - dy * 0.8);
+    ctx.lineTo(p2.x + dx * 0.8, p2.y + dy * 0.8);
+    ctx.lineTo(p1.x + dx, p1.y + dy);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function drawFacialExpressionFromData(ctx, exprData) {
+    const centerX = 250;
+    
+    // Clear face area for redraw
+    ctx.fillStyle = '#FFDAB9';
+    ctx.fillRect(centerX - 35, 145, 70, 60);
+    
+    // Get expression parameters
+    const eyeOpenness = exprData.eye_openness || 1.0;
+    const mouthCurve = exprData.mouth_curve || 0;
+    const mouthOpenness = exprData.mouth_openness || 0;
+    const eyebrows = exprData.eyebrows || 0;
+    
+    // Draw eyebrows
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 3;
+    const eyebrowOffset = eyebrows * 8;
+    
+    ctx.beginPath();
+    ctx.moveTo(centerX - 30, 138 - eyebrowOffset);
+    ctx.quadraticCurveTo(centerX - 20, 135 - eyebrowOffset - Math.abs(eyebrows) * 5, centerX - 10, 138 - eyebrowOffset);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(centerX + 10, 138 - eyebrowOffset);
+    ctx.quadraticCurveTo(centerX + 20, 135 - eyebrowOffset - Math.abs(eyebrows) * 5, centerX + 30, 138 - eyebrowOffset);
+    ctx.stroke();
+    
+    // Draw eyes based on openness
+    const eyeHeight = 10 * eyeOpenness;
+    
+    // Eye whites
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.ellipse(centerX - 20, 155, 8, eyeHeight * 0.8, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(centerX + 20, 155, 8, eyeHeight * 0.8, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Pupils
+    if (eyeOpenness > 0.3) {
+      ctx.fillStyle = '#2c3e50';
+      ctx.beginPath();
+      ctx.arc(centerX - 20, 155, 3, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(centerX + 20, 155, 3, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+    
+    // Draw mouth based on curve and openness
+    ctx.strokeStyle = '#c0392b';
+    ctx.fillStyle = '#c0392b';
+    ctx.lineWidth = 3;
+    
+    const mouthY = 195;
+    const mouthWidth = 15;
+    
+    if (mouthOpenness > 0.1) {
+      // Open mouth
+      ctx.beginPath();
+      ctx.ellipse(centerX, mouthY, mouthWidth * 0.8, mouthOpenness * 12, 0, 0, 2 * Math.PI);
+      ctx.stroke();
+    } else if (mouthCurve > 0.1) {
+      // Smile
+      ctx.beginPath();
+      ctx.arc(centerX, mouthY - 5, mouthWidth, 0.1 * Math.PI, 0.9 * Math.PI);
+      ctx.stroke();
+    } else if (mouthCurve < -0.1) {
+      // Frown
+      ctx.beginPath();
+      ctx.arc(centerX, mouthY + 10, mouthWidth * 0.8, 1.1 * Math.PI, 1.9 * Math.PI);
+      ctx.stroke();
+    } else {
+      // Neutral
+      ctx.beginPath();
+      ctx.moveTo(centerX - mouthWidth, mouthY);
+      ctx.lineTo(centerX + mouthWidth, mouthY);
+      ctx.stroke();
+    }
+  }
+
+  function drawAvatarBody(ctx) {
+    const centerX = 250;
+    const centerY = 250;
+    
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 500);
+    gradient.addColorStop(0, '#e8f4fc');
+    gradient.addColorStop(1, '#d4e9f7');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 500, 500);
+    
+    // Body (torso)
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.moveTo(centerX - 60, 280);
+    ctx.lineTo(centerX + 60, 280);
+    ctx.lineTo(centerX + 70, 450);
+    ctx.lineTo(centerX - 70, 450);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Neck
+    ctx.fillStyle = '#FFDAB9';
+    ctx.fillRect(centerX - 15, 220, 30, 65);
+    
+    // Head (oval)
+    ctx.fillStyle = '#FFDAB9';
+    ctx.beginPath();
+    ctx.ellipse(centerX, 160, 55, 70, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Hair
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.ellipse(centerX, 130, 58, 50, 0, Math.PI, 2 * Math.PI);
+    ctx.fill();
+    
+    // Ears
+    ctx.fillStyle = '#FFDAB9';
+    ctx.beginPath();
+    ctx.ellipse(centerX - 55, 160, 10, 15, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(centerX + 55, 160, 10, 15, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Default eyes (will be overwritten by expression)
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.ellipse(centerX - 20, 155, 8, 10, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(centerX + 20, 155, 8, 10, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Eye whites
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.ellipse(centerX - 20, 155, 6, 8, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(centerX + 20, 155, 6, 8, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Pupils
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.arc(centerX - 20, 155, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(centerX + 20, 155, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Nose
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(centerX, 155);
+    ctx.lineTo(centerX - 5, 175);
+    ctx.lineTo(centerX + 5, 175);
+    ctx.stroke();
+    
+    // Default mouth (neutral)
+    ctx.strokeStyle = '#c0392b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 15, 195);
+    ctx.lineTo(centerX + 15, 195);
+    ctx.stroke();
+    
+    // Shoulders
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.ellipse(centerX - 70, 290, 25, 15, 0, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(centerX + 70, 290, 25, 15, 0, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  function drawRealisticHand(ctx, hand, side) {
+    const x = hand.x;
+    const y = hand.y;
+    const rotation = hand.rotation || 0;
+    const fingers = hand.fingers;
+    
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation * Math.PI / 180);
+    
+    // Scale based on side (mirror for left hand)
+    if (side === 'left') {
+      ctx.scale(-1, 1);
+    }
+    
+    // Palm
+    ctx.fillStyle = '#FFDAB9';
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 2;
+    
+    // Draw palm (rounded rectangle)
+    const palmWidth = 35;
+    const palmHeight = 40;
+    ctx.beginPath();
+    ctx.roundRect(-palmWidth/2, -palmHeight/2, palmWidth, palmHeight, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Draw wrist
+    ctx.fillStyle = '#FFDAB9';
+    ctx.fillRect(-12, palmHeight/2 - 5, 24, 25);
+    
+    // Draw fingers based on finger values (0 = closed, 1 = open)
+    const fingerConfigs = [
+      { name: 'thumb', startX: -palmWidth/2 - 5, startY: -5, angle: -60, length: 30 },
+      { name: 'index', startX: -12, startY: -palmHeight/2, angle: -5, length: 35 },
+      { name: 'middle', startX: -4, startY: -palmHeight/2, angle: 0, length: 40 },
+      { name: 'ring', startX: 4, startY: -palmHeight/2, angle: 5, length: 35 },
+      { name: 'pinky', startX: 12, startY: -palmHeight/2, angle: 10, length: 28 }
+    ];
+    
+    fingerConfigs.forEach(finger => {
+      const openness = fingers[finger.name] || 0;
+      drawFinger(ctx, finger.startX, finger.startY, finger.angle, finger.length, openness);
+    });
+    
+    ctx.restore();
+  }
+
+  function drawFinger(ctx, startX, startY, baseAngle, length, openness) {
+    const segmentLength = length / 3;
+    
+    // Calculate bend based on openness (0 = fully bent, 1 = straight)
+    const bendAngle = (1 - openness) * 90; // Max bend of 90 degrees per joint
+    
+    ctx.save();
+    ctx.translate(startX, startY);
+    ctx.rotate(baseAngle * Math.PI / 180);
+    
+    ctx.fillStyle = '#FFDAB9';
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 1.5;
+    
+    // First segment (metacarpal)
+    const fingerWidth = 8;
+    ctx.beginPath();
+    ctx.roundRect(-fingerWidth/2, -segmentLength, fingerWidth, segmentLength, 3);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Move to next joint
+    ctx.translate(0, -segmentLength);
+    ctx.rotate(-bendAngle * Math.PI / 180);
+    
+    // Second segment (proximal phalanx)
+    ctx.beginPath();
+    ctx.roundRect(-fingerWidth/2 + 1, -segmentLength * 0.9, fingerWidth - 2, segmentLength * 0.9, 3);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Move to next joint
+    ctx.translate(0, -segmentLength * 0.9);
+    ctx.rotate(-bendAngle * 0.7 * Math.PI / 180);
+    
+    // Third segment (distal phalanx with nail)
+    ctx.beginPath();
+    ctx.roundRect(-fingerWidth/2 + 2, -segmentLength * 0.7, fingerWidth - 4, segmentLength * 0.7, 3);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Fingernail
+    ctx.fillStyle = '#FFE4C4';
+    ctx.beginPath();
+    ctx.roundRect(-fingerWidth/2 + 3, -segmentLength * 0.6, fingerWidth - 6, segmentLength * 0.4, 2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+
+  function drawFacialExpression(ctx, expression) {
+    const centerX = 250;
+    const centerY = 160;
+    
+    // Clear mouth area
+    ctx.fillStyle = '#FFDAB9';
+    ctx.fillRect(centerX - 25, 185, 50, 25);
+    
+    ctx.strokeStyle = '#c0392b';
+    ctx.fillStyle = '#c0392b';
+    ctx.lineWidth = 3;
+    
+    switch(expression) {
+      case 'smile':
+      case 'gentle_smile':
+        ctx.beginPath();
+        ctx.arc(centerX, 190, 15, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'big_smile':
+        ctx.beginPath();
+        ctx.arc(centerX, 188, 18, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        // Teeth
+        ctx.fillStyle = 'white';
+        ctx.fillRect(centerX - 12, 190, 24, 8);
+        break;
+        
+      case 'sad':
+        ctx.beginPath();
+        ctx.arc(centerX, 205, 12, 1.1 * Math.PI, 1.9 * Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'question':
+        // Raised eyebrow
+        ctx.save();
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(centerX + 20, 140, 12, 1.2 * Math.PI, 1.8 * Math.PI);
+        ctx.stroke();
+        ctx.restore();
+        // O-shaped mouth
+        ctx.beginPath();
+        ctx.arc(centerX, 195, 8, 0, 2 * Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'disgust':
+        ctx.beginPath();
+        ctx.moveTo(centerX - 15, 195);
+        ctx.quadraticCurveTo(centerX, 200, centerX + 15, 192);
+        ctx.stroke();
+        break;
+        
+      case 'calm':
+      case 'dreamy':
+        // Half-closed eyes
+        ctx.fillStyle = '#FFDAB9';
+        ctx.fillRect(centerX - 30, 150, 60, 15);
+        ctx.fillStyle = '#2c3e50';
+        ctx.beginPath();
+        ctx.arc(centerX - 20, 157, 6, 0, Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(centerX + 20, 157, 6, 0, Math.PI);
+        ctx.fill();
+        // Slight smile
+        ctx.strokeStyle = '#c0392b';
+        ctx.beginPath();
+        ctx.arc(centerX, 192, 10, 0.2 * Math.PI, 0.8 * Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'closed_eyes':
+        // Closed eyes
+        ctx.fillStyle = '#FFDAB9';
+        ctx.fillRect(centerX - 35, 148, 70, 20);
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(centerX - 20, 158, 8, 0, Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(centerX + 20, 158, 8, 0, Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'intense':
+        // Wide eyes
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.ellipse(centerX - 20, 155, 9, 12, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(centerX + 20, 155, 9, 12, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#2c3e50';
+        ctx.beginPath();
+        ctx.arc(centerX - 20, 155, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(centerX + 20, 155, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        // Open mouth
+        ctx.strokeStyle = '#c0392b';
+        ctx.beginPath();
+        ctx.ellipse(centerX, 195, 10, 8, 0, 0, 2 * Math.PI);
+        ctx.stroke();
+        break;
+        
+      case 'shh':
+        // Pursed lips
+        ctx.beginPath();
+        ctx.arc(centerX, 195, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        break;
+        
+      default: // neutral
+        ctx.beginPath();
+        ctx.moveTo(centerX - 15, 195);
+        ctx.lineTo(centerX + 15, 195);
+        ctx.stroke();
+    }
+  }
+
+  // Sign-to-Speech functionality (existing code)
+  const video = document.getElementById('video');
+  const resultText = document.getElementById('result');
+  const startBtn = document.getElementById('start-btn');
+  const abortBtn = document.getElementById('abort-btn');
+  const logContent = document.getElementById('log-content');
+
+  let abortRequested = false;
+  let openHandDetected = false;
+  let predictionList = [];
+
+  // Access webcam
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => { video.srcObject = stream; })
+    .catch(err => console.error("Webcam error:", err));
+
+  function captureFrame() {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+    return canvas.toDataURL('image/jpeg');
+  }
+
+  function isOpenHand(landmarks) {
+    const tips = [8, 12, 16, 20];
+    const mids = [6, 10, 14, 18];
+    return !tips.every((tip, i) => landmarks[tip].y > landmarks[mids[i]].y);
+  }
+
+  async function countdown(seconds) {
+    for (let i = seconds; i > 0; i--) {
+      resultText.textContent = `Starting in ${i}...`;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+
+  function addToPredictionLog(text) {
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.textContent = text;
+    logContent.appendChild(entry);
+    logContent.scrollTop = logContent.scrollHeight;
+  }
+
+  function clearPredictionLog() {
+    logContent.innerHTML = '';
+    predictionList = [];
+  }
+
+  async function predictOnce() {
+    const frames = [];
+    for (let i = 0; i < 30; i++) {
+      if (abortRequested) return;
+      resultText.textContent = `Capturing ${i + 1}/30`;
+      frames.push(captureFrame());
+      await new Promise(r => setTimeout(r, 90));
+    }
+
+    resultText.textContent = 'Sending to server...';
+
+    try {
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frames })
+      });
+      const data = await res.json();
+      const predictionText = data.prediction 
+        ? `Predicted Sign: ${data.prediction}` 
+        : `Error: ${data.error}`;
+      resultText.textContent = predictionText;
+      if (data.prediction) {
+        predictionList.push(data.prediction);
+        addToPredictionLog(data.prediction);
+      }
+    } catch (err) {
+      console.error(err);
+      resultText.textContent = 'Error predicting sign.';
+    }
+  }
+
+  async function continuousPredict() {
+    abortRequested = false;
+    startBtn.disabled = true;
+    abortBtn.disabled = false;
+    clearPredictionLog();
+
+    while (!abortRequested) {
+      await countdown(3);
+      if (abortRequested) break;
+
+      await predictOnce();
+      if (abortRequested) break;
+
+      resultText.textContent = "Waiting... show open hand to abort";
+      openHandDetected = false;
+      const detectionStart = Date.now();
+      while (Date.now() - detectionStart < 3000) {
+        if (openHandDetected) {
+          abortRequested = true;
+          break;
+        }
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
+
+    startBtn.disabled = false;
+    abortBtn.disabled = true;
+
+    if (abortRequested && predictionList.length > 0) {
+      resultText.textContent = 'Prediction aborted. Generating sentence...';
+      await generateSentence(predictionList);
+    } else {
+      resultText.textContent = 'Prediction stopped.';
+    }
+  }
+
+  async function generateSentence(words) {
+    try {
+        const res = await fetch('/generate_sentence', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ words })
+        });
+        const data = await res.json();
+        if (data.sentence) {
+            resultText.textContent = data.sentence;
+
+            // Play the audio if available
+            if (data.audio_url) {
+                const audio = document.getElementById('tts-audio');
+                audio.style.display = 'block';
+                audio.src = data.audio_url;
+                audio.play();
+            }
+        } else {
+            resultText.textContent = 'Error generating sentence.';
+        }
+    } catch (err) {
+        console.error(err);
+        resultText.textContent = 'Error generating sentence.';
+    }
+  }
+
+  startBtn.addEventListener('click', continuousPredict);
+  abortBtn.addEventListener('click', () => { abortRequested = true; });
+
+  // MediaPipe Hands Setup
+  const hands = new Hands({
+    locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+  });
+
+  hands.setOptions({
+    maxNumHands: 1,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.7,
+    minTrackingConfidence: 0.7
+  });
+
+  hands.onResults(results => {
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+      const landmarks = results.multiHandLandmarks[0];
+      openHandDetected = isOpenHand(landmarks);
+    } else {
+      openHandDetected = false;
+    }
+  });
+
+  const camera = new Camera(video, {
+    onFrame: async () => {
+      await hands.send({ image: video });
+    },
+    width: 480,    
+    height: 360   
+  });
+  camera.start();
+</script>
+
+</body>
+</html>
