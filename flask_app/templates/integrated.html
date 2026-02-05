@@ -803,10 +803,16 @@
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Draw avatar body first
+    // Draw avatar body FIRST (background layer)
     drawAvatarBody(ctx);
     
-    // Draw hands using keypoint data from backend
+    // Draw facial expression BEFORE hands so hands appear on top
+    if (frame.facial_expression) {
+      drawFacialExpressionFromData(ctx, frame.facial_expression);
+    }
+    
+    // Draw hands LAST so they appear IN FRONT of everything
+    // This ensures hands are always visible and not covered by face/body
     if (frame.right_hand && frame.right_hand.keypoints) {
       drawHandFromKeypoints(ctx, frame.right_hand.keypoints, frame.right_hand.connections, 'right');
     }
@@ -815,140 +821,278 @@
       drawHandFromKeypoints(ctx, frame.left_hand.keypoints, frame.left_hand.connections, 'left');
     }
     
-    // Draw facial expression
-    if (frame.facial_expression) {
-      drawFacialExpressionFromData(ctx, frame.facial_expression);
-    }
+    // Draw current sign label at bottom
+    drawSignLabel(ctx, frame.sign);
+  }
+  
+  // Draw current sign label for clarity
+  function drawSignLabel(ctx, sign) {
+    if (!sign) return;
+    
+    ctx.save();
+    ctx.fillStyle = 'rgba(44, 62, 80, 0.9)';
+    ctx.roundRect(150, 460, 200, 35, 8);
+    ctx.fill();
+    
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 18px Poppins, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(sign, 250, 478);
+    ctx.restore();
   }
 
   // Draw hand using 21 keypoint landmarks (MediaPipe format)
+  // Super clean, realistic hand with smooth rendering
   function drawHandFromKeypoints(ctx, keypoints, connections, side) {
     if (!keypoints || keypoints.length < 21) return;
     
-    const canvasWidth = 500;
-    const canvasHeight = 500;
+    // === CONFIGURATION ===
+    const config = {
+      skinBase: '#FCDCB8',
+      skinLight: '#FFE8D6',
+      skinDark: '#D4A574',
+      skinOutline: '#B8956E',
+      nailColor: '#FFEBE0',
+      jointColor: '#FEDCC4',
+      sleeveColor: '#2980B9',
+      shadowColor: 'rgba(0, 0, 0, 0.15)'
+    };
     
-    // Convert normalized coordinates to canvas coordinates
-    const points = keypoints.map(kp => ({
-      x: kp.x * canvasWidth,
-      y: kp.y * canvasHeight,
-      z: kp.z || 0
-    }));
+    // === POSITIONING ===
+    const handScale = 2.4;
+    const baseX = side === 'right' ? 355 : 145;
+    const baseY = 310;
     
-    // Default connections if not provided
-    const defaultConnections = [
-      [0, 1], [1, 2], [2, 3], [3, 4],           // Thumb
-      [0, 5], [5, 6], [6, 7], [7, 8],           // Index
-      [0, 9], [9, 10], [10, 11], [11, 12],      // Middle
-      [0, 13], [13, 14], [14, 15], [15, 16],    // Ring
-      [0, 17], [17, 18], [18, 19], [19, 20],    // Pinky
-      [5, 9], [9, 13], [13, 17]                  // Palm
-    ];
+    // Calculate keypoint center
+    let kpCenterX = 0, kpCenterY = 0;
+    keypoints.forEach(kp => {
+      kpCenterX += kp.x;
+      kpCenterY += kp.y;
+    });
+    kpCenterX /= keypoints.length;
+    kpCenterY /= keypoints.length;
     
-    const conns = connections || defaultConnections;
+    // Transform keypoints to canvas space
+    const points = keypoints.map(kp => {
+      let relX = (kp.x - kpCenterX) * handScale * 130;
+      let relY = (kp.y - kpCenterY) * handScale * 130;
+      if (side === 'left') relX = -relX;
+      return { x: baseX + relX, y: baseY + relY, z: kp.z || 0 };
+    });
     
-    // Draw palm fill
-    ctx.fillStyle = 'rgba(255, 218, 185, 0.9)';
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    ctx.lineTo(points[5].x, points[5].y);
-    ctx.lineTo(points[9].x, points[9].y);
-    ctx.lineTo(points[13].x, points[13].y);
-    ctx.lineTo(points[17].x, points[17].y);
-    ctx.closePath();
-    ctx.fill();
+    // === ARM DRAWING WITH NATURAL ROTATION ===
+    const wrist = points[0];
+    const shoulderX = side === 'right' ? 310 : 190;
+    const shoulderY = 285;
     
-    // Draw connections (finger bones)
-    ctx.strokeStyle = '#d4a574';
-    ctx.lineWidth = 4;
+    // Calculate natural elbow bend
+    const dist = Math.sqrt(Math.pow(wrist.x - shoulderX, 2) + Math.pow(wrist.y - shoulderY, 2));
+    const armAngle = Math.atan2(wrist.y - shoulderY, wrist.x - shoulderX);
+    const bendFactor = Math.min(dist / 150, 1) * 0.3;
+    const elbowBend = side === 'right' ? bendFactor : -bendFactor;
+    const elbowX = shoulderX + Math.cos(armAngle - elbowBend) * 55;
+    const elbowY = shoulderY + Math.sin(armAngle - elbowBend) * 55 + 15;
+    
+    ctx.save();
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
-    conns.forEach(conn => {
-      const [i, j] = conn;
-      if (points[i] && points[j]) {
-        ctx.beginPath();
-        ctx.moveTo(points[i].x, points[i].y);
-        ctx.lineTo(points[j].x, points[j].y);
-        ctx.stroke();
-      }
-    });
+    // Shadow for arm
+    ctx.strokeStyle = config.shadowColor;
+    ctx.lineWidth = 28;
+    ctx.beginPath();
+    ctx.moveTo(shoulderX + 3, shoulderY + 3);
+    ctx.quadraticCurveTo(elbowX + 3, elbowY + 3, wrist.x + 3, wrist.y + 3);
+    ctx.stroke();
     
-    // Draw finger segments with fill
-    ctx.fillStyle = '#FFDAB9';
-    ctx.strokeStyle = '#c9a080';
-    ctx.lineWidth = 2;
+    // Upper arm (clothing/sleeve)
+    const sleeveGrad = ctx.createLinearGradient(shoulderX, shoulderY, elbowX, elbowY);
+    sleeveGrad.addColorStop(0, '#2980B9');
+    sleeveGrad.addColorStop(1, '#3498DB');
+    ctx.strokeStyle = sleeveGrad;
+    ctx.lineWidth = 26;
+    ctx.beginPath();
+    ctx.moveTo(shoulderX, shoulderY);
+    ctx.lineTo(elbowX, elbowY);
+    ctx.stroke();
     
-    // Draw each finger as connected segments
-    const fingerGroups = [
-      [0, 1, 2, 3, 4],      // Thumb
-      [0, 5, 6, 7, 8],      // Index
-      [0, 9, 10, 11, 12],   // Middle
-      [0, 13, 14, 15, 16],  // Ring
-      [0, 17, 18, 19, 20]   // Pinky
+    // Forearm (skin with gradient)
+    const skinGrad = ctx.createLinearGradient(elbowX, elbowY, wrist.x, wrist.y);
+    skinGrad.addColorStop(0, config.skinDark);
+    skinGrad.addColorStop(0.5, config.skinBase);
+    skinGrad.addColorStop(1, config.skinLight);
+    ctx.strokeStyle = skinGrad;
+    ctx.lineWidth = 22;
+    ctx.beginPath();
+    ctx.moveTo(elbowX, elbowY);
+    ctx.lineTo(wrist.x, wrist.y);
+    ctx.stroke();
+    
+    // Subtle outline on forearm
+    ctx.strokeStyle = config.skinOutline;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(elbowX, elbowY);
+    ctx.lineTo(wrist.x, wrist.y);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    
+    // === PALM WITH GRADIENT ===
+    ctx.save();
+    const palmGrad = ctx.createRadialGradient(
+      (points[0].x + points[9].x) / 2, (points[0].y + points[9].y) / 2, 5,
+      (points[0].x + points[9].x) / 2, (points[0].y + points[9].y) / 2, 60
+    );
+    palmGrad.addColorStop(0, config.skinLight);
+    palmGrad.addColorStop(1, config.skinBase);
+    
+    ctx.fillStyle = palmGrad;
+    ctx.strokeStyle = config.skinOutline;
+    ctx.lineWidth = 1.5;
+    
+    // Smooth palm shape
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.quadraticCurveTo(points[1].x, points[1].y, points[5].x, points[5].y);
+    ctx.lineTo(points[9].x, points[9].y);
+    ctx.lineTo(points[13].x, points[13].y);
+    ctx.lineTo(points[17].x, points[17].y);
+    ctx.quadraticCurveTo(points[0].x + (side === 'right' ? 15 : -15), points[0].y, points[0].x, points[0].y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    
+    // === DRAW EACH FINGER CLEANLY ===
+    const fingerDefs = [
+      { joints: [1, 2, 3, 4], baseWidth: 14, name: 'thumb' },
+      { joints: [5, 6, 7, 8], baseWidth: 12, name: 'index' },
+      { joints: [9, 10, 11, 12], baseWidth: 12, name: 'middle' },
+      { joints: [13, 14, 15, 16], baseWidth: 11, name: 'ring' },
+      { joints: [17, 18, 19, 20], baseWidth: 10, name: 'pinky' }
     ];
     
-    fingerGroups.forEach((finger, fingerIdx) => {
-      for (let i = 1; i < finger.length; i++) {
-        const p1 = points[finger[i-1]];
-        const p2 = points[finger[i]];
-        if (p1 && p2) {
-          // Draw finger segment
-          const width = fingerIdx === 0 ? 10 : 8 - i; // Thumb thicker, tapers
-          drawFingerSegment(ctx, p1, p2, Math.max(4, width));
-        }
+    fingerDefs.forEach(finger => {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      // Draw each segment of the finger
+      for (let i = 0; i < finger.joints.length - 1; i++) {
+        const p1 = points[finger.joints[i]];
+        const p2 = points[finger.joints[i + 1]];
+        const segWidth = finger.baseWidth * (1 - i * 0.18);
+        
+        // Calculate segment angle
+        const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        const perpAngle = angle + Math.PI / 2;
+        
+        // Create wider ends, narrower middle (natural finger shape)
+        const w1 = segWidth / 2;
+        const w2 = segWidth * 0.42;
+        
+        // Finger segment with gradient
+        const segGrad = ctx.createLinearGradient(
+          p1.x - Math.cos(perpAngle) * w1, p1.y - Math.sin(perpAngle) * w1,
+          p1.x + Math.cos(perpAngle) * w1, p1.y + Math.sin(perpAngle) * w1
+        );
+        segGrad.addColorStop(0, config.skinDark);
+        segGrad.addColorStop(0.3, config.skinBase);
+        segGrad.addColorStop(0.7, config.skinBase);
+        segGrad.addColorStop(1, config.skinDark);
+        
+        ctx.fillStyle = segGrad;
+        ctx.strokeStyle = config.skinOutline;
+        ctx.lineWidth = 1;
+        
+        ctx.beginPath();
+        ctx.moveTo(p1.x - Math.cos(perpAngle) * w1, p1.y - Math.sin(perpAngle) * w1);
+        ctx.lineTo(p2.x - Math.cos(perpAngle) * w2, p2.y - Math.sin(perpAngle) * w2);
+        ctx.lineTo(p2.x + Math.cos(perpAngle) * w2, p2.y + Math.sin(perpAngle) * w2);
+        ctx.lineTo(p1.x + Math.cos(perpAngle) * w1, p1.y + Math.sin(perpAngle) * w1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
       }
+      ctx.restore();
     });
     
-    // Draw joints
-    ctx.fillStyle = '#e8c4a0';
-    points.forEach((point, idx) => {
-      const radius = idx === 0 ? 6 : (idx % 4 === 0 ? 4 : 3); // Wrist larger, tips medium
+    // === DRAW JOINTS ===
+    ctx.save();
+    points.forEach((pt, idx) => {
+      if (idx === 0) return; // Skip wrist
+      
+      const isTip = [4, 8, 12, 16, 20].includes(idx);
+      const radius = isTip ? 5.5 : 4.5;
+      
+      // Joint gradient
+      const jGrad = ctx.createRadialGradient(pt.x - 1, pt.y - 1, 0, pt.x, pt.y, radius);
+      jGrad.addColorStop(0, config.skinLight);
+      jGrad.addColorStop(1, config.jointColor);
+      
+      ctx.fillStyle = jGrad;
+      ctx.strokeStyle = config.skinOutline;
+      ctx.lineWidth = 0.8;
+      
       ctx.beginPath();
-      ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
+      ctx.arc(pt.x, pt.y, radius, 0, 2 * Math.PI);
       ctx.fill();
-      ctx.strokeStyle = '#c9a080';
-      ctx.lineWidth = 1;
       ctx.stroke();
     });
+    ctx.restore();
     
-    // Draw fingernails on tips
+    // === DRAW FINGERNAILS ===
     const tipIndices = [4, 8, 12, 16, 20];
-    ctx.fillStyle = '#FFE4C4';
-    tipIndices.forEach(tipIdx => {
-      if (points[tipIdx]) {
-        const prevIdx = tipIdx - 1;
-        const tip = points[tipIdx];
-        const prev = points[prevIdx];
-        // Calculate nail direction
-        const angle = Math.atan2(tip.y - prev.y, tip.x - prev.x);
-        ctx.save();
-        ctx.translate(tip.x, tip.y);
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.ellipse(3, 0, 4, 3, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.restore();
-      }
+    tipIndices.forEach(idx => {
+      const tip = points[idx];
+      const prev = points[idx - 1];
+      const angle = Math.atan2(tip.y - prev.y, tip.x - prev.x);
+      
+      ctx.save();
+      ctx.translate(tip.x, tip.y);
+      ctx.rotate(angle);
+      
+      // Nail with subtle gradient
+      const nailGrad = ctx.createLinearGradient(2, -3, 8, 3);
+      nailGrad.addColorStop(0, '#FFFFFF');
+      nailGrad.addColorStop(0.5, config.nailColor);
+      nailGrad.addColorStop(1, '#F5D5C8');
+      
+      ctx.fillStyle = nailGrad;
+      ctx.strokeStyle = config.skinDark;
+      ctx.lineWidth = 0.8;
+      
+      ctx.beginPath();
+      ctx.ellipse(5, 0, 5.5, 4, 0, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      
+      ctx.restore();
     });
   }
   
-  function drawFingerSegment(ctx, p1, p2, width) {
+  // Simple finger segment (backup)
+  function drawEnhancedFingerSegment(ctx, p1, p2, width) {
     const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
     const perpAngle = angle + Math.PI / 2;
     
-    const dx = Math.cos(perpAngle) * width / 2;
-    const dy = Math.sin(perpAngle) * width / 2;
+    const dx1 = Math.cos(perpAngle) * width / 2;
+    const dy1 = Math.sin(perpAngle) * width / 2;
+    const dx2 = Math.cos(perpAngle) * width * 0.4;
+    const dy2 = Math.sin(perpAngle) * width * 0.4;
     
     ctx.fillStyle = '#FFDAB9';
     ctx.beginPath();
-    ctx.moveTo(p1.x - dx, p1.y - dy);
-    ctx.lineTo(p2.x - dx * 0.8, p2.y - dy * 0.8);
-    ctx.lineTo(p2.x + dx * 0.8, p2.y + dy * 0.8);
-    ctx.lineTo(p1.x + dx, p1.y + dy);
+    ctx.moveTo(p1.x - dx1, p1.y - dy1);
+    ctx.lineTo(p2.x - dx2, p2.y - dy2);
+    ctx.lineTo(p2.x + dx2, p2.y + dy2);
+    ctx.lineTo(p1.x + dx1, p1.y + dy1);
     ctx.closePath();
     ctx.fill();
-    ctx.strokeStyle = '#d4a574';
+    ctx.strokeStyle = '#C9A080';
     ctx.lineWidth = 1;
     ctx.stroke();
   }

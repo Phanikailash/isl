@@ -306,27 +306,107 @@ class ISLDatabase:
         return self._create_sign_data('5', self._create_base_hand(), 'number')
     
     def _create_sign_6(self) -> Dict:
-        """Number 6 - Thumb touches pinky"""
-        landmarks = self._create_base_hand()
-        landmarks[4] = {'x': landmarks[20]['x'], 'y': landmarks[20]['y'], 'z': 0.02}
+        """Number 6 - Fist with thumb extended upward (thumbs up style)"""
+        landmarks = []
+        x, y = 0.5, 0.5
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb pointing straight UP
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.10, 'z': 0.0})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.16, 'z': 0.0})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.22, 'z': 0.0})  # Thumb tip UP
+        # All other fingers tightly curled into fist
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.04, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.02, 'z': 0.08})
+            landmarks.append({'x': base_x + 0.03, 'y': y + 0.02, 'z': 0.06})
         return self._create_sign_data('6', landmarks, 'number')
     
     def _create_sign_7(self) -> Dict:
-        """Number 7 - Thumb touches ring finger"""
-        landmarks = self._create_base_hand()
-        landmarks[4] = {'x': landmarks[16]['x'], 'y': landmarks[16]['y'], 'z': 0.02}
+        """Number 7 - Index and middle pointing sideways (gun shape)"""
+        landmarks = []
+        x, y = 0.5, 0.5
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb pointing up
+        landmarks.append({'x': x - 0.05, 'y': y - 0.03, 'z': 0.0})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.13, 'z': 0.0})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.18, 'z': 0.0})
+        # Index pointing LEFT (horizontal)
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.18, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.26, 'y': y - 0.06, 'z': 0.0})  # Index tip
+        # Middle also pointing LEFT (parallel to index)
+        landmarks.append({'x': x + 0.01, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.01, 'z': 0.0})
+        landmarks.append({'x': x - 0.23, 'y': y, 'z': 0.0})  # Middle tip
+        # Ring and pinky curled
+        for i, offset in enumerate([0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.05, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.03, 'z': 0.05})
+            landmarks.append({'x': base_x + 0.01, 'y': y, 'z': 0.07})
+            landmarks.append({'x': base_x + 0.02, 'y': y + 0.03, 'z': 0.05})
         return self._create_sign_data('7', landmarks, 'number')
     
     def _create_sign_8(self) -> Dict:
-        """Number 8 - Thumb touches middle finger"""
-        landmarks = self._create_base_hand()
-        landmarks[4] = {'x': landmarks[12]['x'], 'y': landmarks[12]['y'], 'z': 0.02}
+        """Number 8 - Three fingers (index, middle, ring) extended, thumb and pinky touching"""
+        landmarks = []
+        x, y = 0.5, 0.5
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb curving to touch pinky
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.04, 'z': 0.04})
+        landmarks.append({'x': x + 0.02, 'y': y - 0.05, 'z': 0.05})
+        landmarks.append({'x': x + 0.06, 'y': y - 0.06, 'z': 0.04})  # Thumb tip touching pinky
+        # Index extended UP
+        landmarks.append({'x': x - 0.04, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.14, 'z': 0.0})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.20, 'z': 0.0})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.26, 'z': 0.0})
+        # Middle extended UP
+        landmarks.append({'x': x, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x, 'y': y - 0.15, 'z': 0.0})
+        landmarks.append({'x': x, 'y': y - 0.22, 'z': 0.0})
+        landmarks.append({'x': x, 'y': y - 0.28, 'z': 0.0})
+        # Ring extended UP
+        landmarks.append({'x': x + 0.04, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.05, 'y': y - 0.14, 'z': 0.0})
+        landmarks.append({'x': x + 0.06, 'y': y - 0.20, 'z': 0.0})
+        landmarks.append({'x': x + 0.06, 'y': y - 0.25, 'z': 0.0})
+        # Pinky bent to touch thumb
+        landmarks.append({'x': x + 0.08, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x + 0.09, 'y': y - 0.04, 'z': 0.03})
+        landmarks.append({'x': x + 0.08, 'y': y - 0.05, 'z': 0.05})
+        landmarks.append({'x': x + 0.06, 'y': y - 0.06, 'z': 0.04})  # Touching thumb
         return self._create_sign_data('8', landmarks, 'number')
     
     def _create_sign_9(self) -> Dict:
-        """Number 9 - Thumb touches index finger"""
-        landmarks = self._create_base_hand()
-        landmarks[4] = {'x': landmarks[8]['x'], 'y': landmarks[8]['y'], 'z': 0.02}
+        """Number 9 - Closed fist with pinky extended (like 'I love you' without thumb)"""
+        landmarks = []
+        x, y = 0.5, 0.5
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb curled into fist
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.05, 'z': 0.06})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.04, 'z': 0.06})
+        # Index, middle, ring all curled into tight fist
+        for i, offset in enumerate([-0.03, 0.01, 0.05]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.04, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.02, 'z': 0.08})
+            landmarks.append({'x': base_x + 0.03, 'y': y + 0.02, 'z': 0.06})
+        # Pinky extended straight UP
+        landmarks.append({'x': x + 0.09, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x + 0.10, 'y': y - 0.12, 'z': 0.0})
+        landmarks.append({'x': x + 0.11, 'y': y - 0.17, 'z': 0.0})
+        landmarks.append({'x': x + 0.12, 'y': y - 0.22, 'z': 0.0})  # Pinky tip UP
         return self._create_sign_data('9', landmarks, 'number')
     
     # ============ LETTER SIGNS ============
@@ -571,182 +651,525 @@ class ISLDatabase:
     # ============ WORD SIGNS ============
     
     def _create_sign_hello(self) -> Dict:
-        """Hello - Open hand wave near forehead"""
-        start_hand = self._create_base_hand(0.6, 0.3)
-        end_hand = self._create_base_hand(0.7, 0.3)
+        """Hello - Open hand wave near forehead with spread fingers"""
+        landmarks = []
+        x, y = 0.6, 0.28
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb pointing outward
+        landmarks.append({'x': x - 0.10, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.17, 'y': y - 0.10, 'z': 0.0})
+        landmarks.append({'x': x - 0.19, 'y': y - 0.14, 'z': 0.0})
+        # Fingers spread wide (wave position)
+        for i, offset in enumerate([-0.05, 0.0, 0.05, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x + (j * 0.01), 'y': y - 0.08 - (j * 0.05), 'z': 0.0})
+        start_hand = landmarks
+        end_hand = [{'x': lm['x'] + 0.08, 'y': lm['y'], 'z': lm['z']} for lm in landmarks]
         return self._create_animated_sign('Hello', start_hand, end_hand, 
                                           motion='wave', facial='smile', 
                                           body_region='head')
     
     def _create_sign_thank_you(self) -> Dict:
-        """Thank you - Flat hand from chin outward"""
-        start_hand = self._create_base_hand(0.5, 0.35)
-        end_hand = self._create_base_hand(0.5, 0.5)
+        """Thank you - Flat hand touching chin then moving outward"""
+        landmarks = []
+        x, y = 0.5, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked slightly
+        landmarks.append({'x': x - 0.06, 'y': y - 0.01, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.03, 'z': 0.03})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.05, 'z': 0.03})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.07, 'z': 0.03})
+        # Fingers together flat
+        for i, offset in enumerate([-0.03, 0.0, 0.03, 0.06]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.04), 'z': 0.01})
+        start_hand = landmarks
+        end_hand = [{'x': lm['x'], 'y': lm['y'] + 0.18, 'z': lm['z'] - 0.02} for lm in landmarks]
         return self._create_animated_sign('Thank you', start_hand, end_hand,
                                           motion='outward', facial='smile',
                                           body_region='chin')
     
     def _create_sign_good_morning(self) -> Dict:
-        """Good Morning - Rising sun motion"""
-        start_hand = self._create_base_hand(0.4, 0.6)
-        end_hand = self._create_base_hand(0.5, 0.3)
+        """Good Morning - Sun rising motion with open hand"""
+        landmarks = []
+        x, y = 0.35, 0.55
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb up and out
+        landmarks.append({'x': x - 0.08, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.12, 'y': y - 0.10, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.15, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.20, 'z': 0.0})
+        # Fingers spread upward like sun rays
+        for i, offset in enumerate([-0.04, 0.0, 0.04, 0.08]):
+            base_x = x + offset
+            for j in range(4):
+                angle = (i - 1.5) * 0.08
+                landmarks.append({'x': base_x + (j * angle * 0.3), 'y': y - 0.10 - (j * 0.05), 'z': 0.0})
+        start_hand = landmarks
+        end_hand = [{'x': lm['x'] + 0.15, 'y': lm['y'] - 0.25, 'z': lm['z']} for lm in landmarks]
         return self._create_animated_sign('Good Morning', start_hand, end_hand,
                                           motion='rising', facial='smile',
                                           body_region='chest')
     
     def _create_sign_good_night(self) -> Dict:
-        """Good night - Hands together, head tilt"""
-        landmarks = self._create_base_hand(0.5, 0.35)
+        """Good night - Palms together near tilted head"""
+        landmarks = []
+        x, y = 0.55, 0.30
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb folded in (prayer position)
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.04})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.08, 'z': 0.04})
+        # Fingers together vertically
+        for i, offset in enumerate([-0.02, 0.0, 0.02, 0.04]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.045), 'z': 0.02})
         return self._create_sign_data('Good night', landmarks, 'phrase',
                                       facial='calm', motion='closing',
                                       two_hands=True)
     
     def _create_sign_how_are_you(self) -> Dict:
-        """How are you - Question gesture"""
-        start_hand = self._create_base_hand(0.45, 0.4)
-        end_hand = self._create_base_hand(0.55, 0.4)
+        """How are you - Curved questioning hands"""
+        landmarks = []
+        x, y = 0.45, 0.42
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb curved inward
+        landmarks.append({'x': x - 0.06, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.05, 'z': 0.03})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.08, 'z': 0.04})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.10, 'z': 0.05})
+        # Fingers curved like asking question
+        for i, offset in enumerate([-0.03, 0.0, 0.03, 0.06]):
+            base_x = x + offset
+            for j in range(4):
+                curve = 0.02 * j if j > 1 else 0
+                landmarks.append({'x': base_x + curve, 'y': y - 0.08 - (j * 0.04), 'z': 0.02 + curve})
+        start_hand = landmarks
+        end_hand = [{'x': lm['x'] + 0.12, 'y': lm['y'], 'z': lm['z']} for lm in landmarks]
         return self._create_animated_sign('How are you', start_hand, end_hand,
                                           motion='questioning', facial='question',
                                           body_region='chest')
     
     def _create_sign_happy(self) -> Dict:
-        """Happy - Circular motion on chest"""
-        landmarks = self._create_base_hand(0.5, 0.45)
+        """Happy - Open palm patting chest upward"""
+        landmarks = []
+        x, y = 0.48, 0.48
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended sideways
+        landmarks.append({'x': x - 0.09, 'y': y - 0.01, 'z': 0.0})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.03, 'z': 0.0})
+        landmarks.append({'x': x - 0.16, 'y': y - 0.05, 'z': 0.0})
+        landmarks.append({'x': x - 0.18, 'y': y - 0.06, 'z': 0.0})
+        # All fingers extended and slightly spread (brushing upward)
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.09 - (j * 0.045), 'z': 0.01})
         return self._create_sign_data('Happy', landmarks, 'emotion',
                                       facial='smile', motion='circular',
                                       body_region='chest')
     
     def _create_sign_sad(self) -> Dict:
-        """Sad - Hands moving down from face"""
-        start_hand = self._create_base_hand(0.5, 0.3)
-        end_hand = self._create_base_hand(0.5, 0.5)
+        """Sad - Both hands with fingers down, drooping from face"""
+        landmarks = []
+        x, y = 0.5, 0.35
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb relaxed
+        landmarks.append({'x': x - 0.07, 'y': y + 0.01, 'z': 0.01})
+        landmarks.append({'x': x - 0.10, 'y': y + 0.03, 'z': 0.02})
+        landmarks.append({'x': x - 0.12, 'y': y + 0.06, 'z': 0.02})
+        landmarks.append({'x': x - 0.13, 'y': y + 0.09, 'z': 0.02})
+        # Fingers drooping downward (sad expression)
+        for i, offset in enumerate([-0.04, 0.0, 0.04, 0.08]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y + 0.02 + (j * 0.05), 'z': 0.02})
+        start_hand = landmarks
+        end_hand = [{'x': lm['x'], 'y': lm['y'] + 0.15, 'z': lm['z']} for lm in landmarks]
         return self._create_animated_sign('Sad', start_hand, end_hand,
                                           motion='downward', facial='sad',
                                           body_region='face')
     
     def _create_sign_beautiful(self) -> Dict:
-        """Beautiful - Circle around face"""
-        landmarks = self._create_base_hand(0.5, 0.3)
+        """Beautiful - Open hand circling the face"""
+        landmarks = []
+        x, y = 0.55, 0.28
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended
+        landmarks.append({'x': x - 0.08, 'y': y - 0.03, 'z': 0.0})
+        landmarks.append({'x': x - 0.11, 'y': y - 0.07, 'z': 0.0})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.11, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.14, 'z': 0.0})
+        # Fingers together elegantly
+        for i, offset in enumerate([-0.02, 0.01, 0.04, 0.07]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.048), 'z': 0.0})
         return self._create_sign_data('Beautiful', landmarks, 'adjective',
                                       facial='smile', motion='circular',
                                       body_region='face')
     
     def _create_sign_ugly(self) -> Dict:
-        """Ugly - Bent fingers across face"""
-        landmarks = self._create_fist(0.5, 0.35)
+        """Ugly - Bent claw-like fingers crossing face"""
+        landmarks = []
+        x, y = 0.48, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb bent
+        landmarks.append({'x': x - 0.06, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.05, 'z': 0.05})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.07, 'z': 0.06})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.08, 'z': 0.06})
+        # Fingers bent like claws
+        for i, offset in enumerate([-0.04, 0.0, 0.04, 0.08]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.12, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.10, 'z': 0.07})
+            landmarks.append({'x': base_x + 0.03, 'y': y - 0.06, 'z': 0.06})
         return self._create_sign_data('Ugly', landmarks, 'adjective',
                                       facial='frown', motion='across',
                                       body_region='face')
     
     def _create_sign_alright(self) -> Dict:
-        """Alright - OK gesture"""
-        landmarks = self._create_sign_0()['keyframes'][0]['right_hand']
+        """Alright - OK gesture with thumb and index circle, other fingers up"""
+        landmarks = []
+        x, y = 0.5, 0.45
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb touching index tip to form OK circle
+        landmarks.append({'x': x - 0.05, 'y': y - 0.03, 'z': 0.02})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.06, 'z': 0.03})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.09, 'z': 0.03})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.11, 'z': 0.02})  # Thumb tip
+        # Index finger curling to meet thumb
+        landmarks.append({'x': x - 0.03, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.11, 'z': 0.02})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.12, 'z': 0.03})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.11, 'z': 0.02})  # Meeting thumb
+        # Middle, ring, pinky extended upward
+        for i, offset in enumerate([0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.05), 'z': 0.0})
         return self._create_sign_data('Alright', landmarks, 'expression',
                                       facial='neutral', motion='static')
     
     def _create_sign_pleased(self) -> Dict:
-        """Pleased - Flat hand on chest, circular motion"""
-        landmarks = self._create_base_hand(0.5, 0.45)
+        """Pleased - Both hands flat on chest moving outward"""
+        landmarks = []
+        x, y = 0.52, 0.50
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked under
+        landmarks.append({'x': x - 0.05, 'y': y + 0.01, 'z': 0.03})
+        landmarks.append({'x': x - 0.06, 'y': y + 0.02, 'z': 0.04})
+        landmarks.append({'x': x - 0.05, 'y': y + 0.03, 'z': 0.04})
+        landmarks.append({'x': x - 0.03, 'y': y + 0.03, 'z': 0.03})
+        # Fingers flat together pointing forward
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.06 - (j * 0.04), 'z': 0.04})
         return self._create_sign_data('Pleased', landmarks, 'emotion',
-                                      facial='smile', motion='circular',
+                                      facial='smile', motion='outward',
                                       body_region='chest')
     
     # ============ ANIMAL SIGNS ============
     
     def _create_sign_animal(self) -> Dict:
-        """Animal - Fingertips on chest, rocking motion"""
-        landmarks = self._create_fist(0.5, 0.45)
-        landmarks[8] = landmarks[12] = landmarks[16] = landmarks[20] = {'x': 0.5, 'y': 0.45, 'z': 0.02}
+        """Animal - Fingertips on chest with rocking claw motion"""
+        landmarks = []
+        x, y = 0.5, 0.52
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb curled
+        landmarks.append({'x': x - 0.05, 'y': y - 0.03, 'z': 0.03})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.08, 'z': 0.06})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.09, 'z': 0.05})
+        # All fingers curved like claws touching chest
+        for i, offset in enumerate([-0.04, 0.0, 0.04, 0.08]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.10, 'z': 0.06})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.10})
+            landmarks.append({'x': base_x, 'y': y - 0.05, 'z': 0.08})
         return self._create_sign_data('Animal', landmarks, 'noun',
                                       motion='rocking', body_region='chest')
     
     def _create_sign_bird(self) -> Dict:
-        """Bird - Beak motion near mouth"""
-        landmarks = self._create_fist(0.5, 0.35)
-        # Index and thumb form beak
-        landmarks[4] = {'x': 0.48, 'y': 0.32, 'z': 0.0}
-        landmarks[8] = {'x': 0.48, 'y': 0.30, 'z': 0.0}
+        """Bird - Index and thumb forming beak opening/closing near mouth"""
+        landmarks = []
+        x, y = 0.48, 0.33
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb forming beak - upper part
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.11, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.13, 'z': 0.0})  # Beak tip
+        # Index forming beak - lower part
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.10, 'z': 0.0})
+        landmarks.append({'x': x - 0.12, 'y': y - 0.13, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.14, 'z': 0.01})  # Meeting thumb
+        # Other fingers curled in
+        for i, offset in enumerate([0.0, 0.04, 0.08]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('Bird', landmarks, 'noun',
                                       motion='opening_closing', body_region='mouth')
     
     def _create_sign_cat(self) -> Dict:
-        """Cat - Whiskers motion at cheeks"""
-        landmarks = self._create_fist(0.5, 0.35)
-        # Pinch for whiskers
-        landmarks[4] = {'x': 0.46, 'y': 0.34, 'z': 0.0}
-        landmarks[8] = {'x': 0.46, 'y': 0.32, 'z': 0.0}
+        """Cat - Pinching whiskers at cheeks, pulling outward"""
+        landmarks = []
+        x, y = 0.52, 0.34
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb and index pinched for whisker
+        landmarks.append({'x': x - 0.05, 'y': y - 0.03, 'z': 0.01})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.06, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.10, 'z': 0.01})  # Whisker pinch
+        # Index near thumb
+        landmarks.append({'x': x - 0.03, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.09, 'z': 0.01})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.11, 'z': 0.01})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.11, 'z': 0.01})
+        # Middle, ring, pinky loosely curled
+        for i, offset in enumerate([0.0, 0.04, 0.08]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.09, 'z': 0.03})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.08, 'z': 0.05})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.05, 'z': 0.04})
         return self._create_sign_data('Cat', landmarks, 'noun',
                                       motion='outward', body_region='cheek',
                                       two_hands=True)
     
     def _create_sign_dog(self) -> Dict:
-        """Dog - Snap fingers, patting motion"""
-        landmarks = self._create_base_hand(0.5, 0.5)
+        """Dog - Snapping fingers with patting thigh motion"""
+        landmarks = []
+        x, y = 0.5, 0.58
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb ready to snap
+        landmarks.append({'x': x - 0.06, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.05, 'z': 0.03})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.08, 'z': 0.04})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.09, 'z': 0.04})
+        # Index and middle extended for snapping
+        landmarks.append({'x': x - 0.03, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.12, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.16, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.19, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.12, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.16, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.19, 'z': 0.0})
+        # Ring and pinky curled
+        for i, offset in enumerate([0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.09, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.07, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.04, 'z': 0.05})
         return self._create_sign_data('Dog', landmarks, 'noun',
                                       motion='patting', body_region='thigh')
     
     def _create_sign_cow(self) -> Dict:
-        """Cow - Y hand at temple for horns"""
-        landmarks = self._letter_y()
-        # Move to temple
-        for lm in landmarks:
-            lm['y'] -= 0.15
+        """Cow - Y handshape at temples representing horns"""
+        landmarks = []
+        x, y = 0.55, 0.25
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended out for horn
+        landmarks.append({'x': x - 0.08, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.05, 'z': 0.0})
+        landmarks.append({'x': x - 0.17, 'y': y - 0.09, 'z': 0.0})
+        landmarks.append({'x': x - 0.20, 'y': y - 0.12, 'z': 0.0})
+        # Index, middle, ring curled in fist
+        for i, offset in enumerate([-0.04, 0.0, 0.04]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
+        # Pinky extended for other horn
+        landmarks.append({'x': x + 0.08, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x + 0.10, 'y': y - 0.10, 'z': 0.0})
+        landmarks.append({'x': x + 0.12, 'y': y - 0.14, 'z': 0.0})
+        landmarks.append({'x': x + 0.14, 'y': y - 0.17, 'z': 0.0})
         return self._create_sign_data('Cow', landmarks, 'noun',
                                       motion='twisting', body_region='temple')
     
     def _create_sign_horse(self) -> Dict:
-        """Horse - Thumb at temple, fingers flapping"""
-        landmarks = self._create_base_hand(0.55, 0.3)
-        landmarks[4] = {'x': 0.55, 'y': 0.28, 'z': 0.02}
+        """Horse - Thumb at temple with fingers flapping like ears"""
+        landmarks = []
+        x, y = 0.58, 0.26
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb touching temple
+        landmarks.append({'x': x - 0.06, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.06, 'z': 0.06})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.08, 'z': 0.06})
+        # Index and middle extended upward as ears
+        landmarks.append({'x': x - 0.03, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.14, 'z': 0.0})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.19, 'z': 0.0})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.23, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.14, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.19, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.23, 'z': 0.0})
+        # Ring and pinky curled
+        for i, offset in enumerate([0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('Horse', landmarks, 'noun',
                                       motion='flapping', body_region='temple')
     
     def _create_sign_mouse(self) -> Dict:
-        """Mouse - Finger brushing nose"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        # Position at nose
-        for lm in landmarks:
-            lm['y'] -= 0.1
+        """Mouse - Index finger brushing nose repeatedly"""
+        landmarks = []
+        x, y = 0.5, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb relaxed
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.04, 'z': 0.03})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.06, 'z': 0.03})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.03})
+        # Index extended pointing at nose
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.12, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.17, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.21, 'z': 0.0})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('Mouse', landmarks, 'noun',
                                       motion='brushing', body_region='nose')
     
     def _create_sign_fish(self) -> Dict:
-        """Fish - Flat hand swimming motion"""
-        landmarks = self._create_base_hand(0.5, 0.5)
+        """Fish - Flat hand making swimming wave motion"""
+        landmarks = []
+        x, y = 0.5, 0.52
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb alongside hand
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.05, 'z': 0.02})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.08, 'z': 0.02})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.10, 'z': 0.02})
+        # Fingers together flat like fish body, slight wave
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            wave = 0.01 if i % 2 == 0 else -0.01
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.04), 'z': wave})
         return self._create_sign_data('Fish', landmarks, 'noun',
                                       motion='swimming', body_region='neutral')
     
     # ============ FAMILY SIGNS ============
     
     def _create_sign_mother(self) -> Dict:
-        """Mother - Thumb on chin with open hand"""
-        landmarks = self._create_base_hand(0.5, 0.38)
-        landmarks[4] = {'x': 0.5, 'y': 0.36, 'z': 0.02}
+        """Mother - Open hand with thumb touching chin"""
+        landmarks = []
+        x, y = 0.5, 0.36
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb touching chin
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.04})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.06})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.11, 'z': 0.07})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.13, 'z': 0.07})  # On chin
+        # Fingers spread open
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.045), 'z': 0.0})
         return self._create_sign_data('Mother', landmarks, 'noun',
                                       facial='smile', body_region='chin')
     
     def _create_sign_father(self) -> Dict:
-        """Father - Thumb on forehead with open hand"""
-        landmarks = self._create_base_hand(0.5, 0.28)
-        landmarks[4] = {'x': 0.5, 'y': 0.26, 'z': 0.02}
+        """Father - Open hand with thumb touching forehead"""
+        landmarks = []
+        x, y = 0.5, 0.26
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb touching forehead
+        landmarks.append({'x': x - 0.06, 'y': y - 0.03, 'z': 0.04})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.06, 'z': 0.06})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.09, 'z': 0.07})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.11, 'z': 0.07})  # On forehead
+        # Fingers spread open
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.045), 'z': 0.0})
         return self._create_sign_data('Father', landmarks, 'noun',
                                       facial='neutral', body_region='forehead')
     
     def _create_sign_daughter(self) -> Dict:
-        """Daughter - Girl + baby motion"""
-        landmarks = self._create_base_hand(0.5, 0.4)
+        """Daughter - Girl sign (chin) + cradling baby motion"""
+        landmarks = []
+        x, y = 0.52, 0.42
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb along side
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.01})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.04, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.06, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.02})
+        # Fingers curved as if cradling
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x - 0.01, 'y': y - 0.10, 'z': 0.03})
+            landmarks.append({'x': base_x - 0.02, 'y': y - 0.12, 'z': 0.05})
+            landmarks.append({'x': base_x - 0.02, 'y': y - 0.13, 'z': 0.06})
         return self._create_sign_data('Daughter', landmarks, 'noun',
                                       motion='cradling', body_region='chin')
     
     def _create_sign_son(self) -> Dict:
-        """Son - Boy + baby motion"""
-        landmarks = self._create_base_hand(0.5, 0.3)
+        """Son - Boy sign (forehead) + cradling motion"""
+        landmarks = []
+        x, y = 0.52, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb along side
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.01})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.04, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.06, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.02})
+        # Fingers in salute position at forehead
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.12, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.16, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.19, 'z': 0.0})
         return self._create_sign_data('Son', landmarks, 'noun',
                                       motion='cradling', body_region='forehead')
     
     def _create_sign_parent(self) -> Dict:
-        """Parent - Combined mother/father"""
-        landmarks = self._create_base_hand(0.5, 0.32)
+        """Parent - Alternating between forehead and chin touch"""
+        landmarks = []
+        x, y = 0.5, 0.34
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended
+        landmarks.append({'x': x - 0.07, 'y': y - 0.03, 'z': 0.03})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.07, 'z': 0.04})
+        landmarks.append({'x': x - 0.12, 'y': y - 0.10, 'z': 0.05})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.12, 'z': 0.05})
+        # Fingers together
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.042), 'z': 0.02})
         return self._create_sign_data('Parent', landmarks, 'noun',
                                       motion='alternating', body_region='face',
                                       two_hands=True)
@@ -754,194 +1177,614 @@ class ISLDatabase:
     # ============ OBJECT SIGNS ============
     
     def _create_sign_chair(self) -> Dict:
-        """Chair - Two fingers sitting on thumb"""
-        landmarks = self._create_fist(0.5, 0.5)
-        landmarks[8] = {'x': 0.46, 'y': 0.44, 'z': 0.0}
-        landmarks[12] = {'x': 0.50, 'y': 0.44, 'z': 0.0}
-        landmarks[4] = {'x': 0.48, 'y': 0.50, 'z': 0.0}
+        """Chair - Two bent fingers (legs) sitting on horizontal thumb"""
+        landmarks = []
+        x, y = 0.5, 0.52
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb horizontal as seat
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.17, 'y': y - 0.04, 'z': 0.0})
+        # Index and middle bent down (legs)
+        landmarks.append({'x': x - 0.03, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.12, 'z': 0.03})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.10, 'z': 0.06})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.06, 'z': 0.06})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.12, 'z': 0.03})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.10, 'z': 0.06})
+        landmarks.append({'x': x + 0.01, 'y': y - 0.06, 'z': 0.06})
+        # Ring and pinky curled
+        for i, offset in enumerate([0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('Chair', landmarks, 'noun',
                                       motion='tapping', two_hands=True)
     
     def _create_sign_table(self) -> Dict:
-        """Table - Flat hands forming surface"""
-        landmarks = self._create_base_hand(0.5, 0.5)
+        """Table - Both flat hands forming horizontal surface"""
+        landmarks = []
+        x, y = 0.5, 0.55
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked under
+        landmarks.append({'x': x - 0.04, 'y': y + 0.01, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y + 0.02, 'z': 0.04})
+        landmarks.append({'x': x - 0.04, 'y': y + 0.03, 'z': 0.04})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.03, 'z': 0.03})
+        # All fingers flat, horizontal (palm down)
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.04 - (j * 0.03), 'z': 0.08})
         return self._create_sign_data('Table', landmarks, 'noun',
                                       motion='patting', two_hands=True)
     
     def _create_sign_bed(self) -> Dict:
-        """Bed - Hands together by tilted head"""
-        landmarks = self._create_base_hand(0.55, 0.35)
+        """Bed - Tilted head on hands (sleeping gesture)"""
+        landmarks = []
+        x, y = 0.58, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb along palm
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.06, 'z': 0.03})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.07, 'z': 0.03})
+        # Fingers together, tilted as pillow
+        for i, offset in enumerate([-0.02, 0.01, 0.04, 0.07]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x + (j * 0.02), 'y': y - 0.06 - (j * 0.03), 'z': 0.02})
         return self._create_sign_data('Bed', landmarks, 'noun',
                                       facial='calm', motion='resting',
                                       body_region='head')
     
     def _create_sign_bedroom(self) -> Dict:
-        """Bedroom - Bed + Room"""
-        landmarks = self._create_base_hand(0.5, 0.45)
+        """Bedroom - Bed sign + box/room outline"""
+        landmarks = []
+        x, y = 0.5, 0.48
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended
+        landmarks.append({'x': x - 0.07, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.11, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.16, 'y': y - 0.08, 'z': 0.0})
+        # Fingers making L shape for room corner
+        landmarks.append({'x': x - 0.03, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.13, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.17, 'z': 0.0})
+        landmarks.append({'x': x - 0.03, 'y': y - 0.20, 'z': 0.0})
+        # Other fingers curved inward
+        for i, offset in enumerate([0.01, 0.05, 0.09]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.10, 'z': 0.03})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.08, 'z': 0.05})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.05, 'z': 0.04})
         return self._create_sign_data('Bedroom', landmarks, 'noun',
                                       motion='box_shape', two_hands=True)
     
     def _create_sign_door(self) -> Dict:
-        """Door - Flat hand opening motion"""
-        start_hand = self._create_base_hand(0.4, 0.5)
-        end_hand = self._create_base_hand(0.6, 0.5)
-        return self._create_animated_sign('Door', start_hand, end_hand,
+        """Door - Flat hand swinging open like door"""
+        landmarks_start = []
+        landmarks_end = []
+        x, y = 0.42, 0.48
+        # Start position - closed door
+        landmarks_start.append({'x': x, 'y': y, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.02})
+        landmarks_start.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.03})
+        landmarks_start.append({'x': x - 0.06, 'y': y - 0.06, 'z': 0.03})
+        landmarks_start.append({'x': x - 0.05, 'y': y - 0.07, 'z': 0.02})
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks_start.append({'x': base_x, 'y': y - 0.08 - (j * 0.04), 'z': 0.0})
+        # End position - open door (rotated)
+        landmarks_end.append({'x': x + 0.18, 'y': y, 'z': 0.0})
+        landmarks_end.append({'x': x + 0.13, 'y': y - 0.02, 'z': 0.02})
+        landmarks_end.append({'x': x + 0.12, 'y': y - 0.04, 'z': 0.03})
+        landmarks_end.append({'x': x + 0.12, 'y': y - 0.06, 'z': 0.03})
+        landmarks_end.append({'x': x + 0.13, 'y': y - 0.07, 'z': 0.02})
+        for i, offset in enumerate([0.16, 0.20, 0.24, 0.28]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks_end.append({'x': base_x, 'y': y - 0.08 - (j * 0.04), 'z': 0.04})
+        return self._create_animated_sign('Door', landmarks_start, landmarks_end,
                                           motion='opening')
     
     def _create_sign_window(self) -> Dict:
-        """Window - Outline rectangle, then open"""
-        landmarks = self._create_base_hand(0.5, 0.4)
+        """Window - Flat hands sliding up and down"""
+        landmarks = []
+        x, y = 0.5, 0.42
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb at side
+        landmarks.append({'x': x - 0.06, 'y': y - 0.02, 'z': 0.01})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.04, 'z': 0.01})
+        landmarks.append({'x': x - 0.09, 'y': y - 0.06, 'z': 0.01})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.07, 'z': 0.01})
+        # Fingers spread forming window frame
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.07 - (j * 0.05), 'z': 0.0})
         return self._create_sign_data('Window', landmarks, 'noun',
                                       motion='sliding', two_hands=True)
     
     # ============ COLOR SIGNS ============
     
     def _create_sign_black(self) -> Dict:
-        """Black - Index across forehead"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['y'] -= 0.2
+        """Black - Index finger drawing line across forehead"""
+        landmarks = []
+        x, y = 0.45, 0.24
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.04})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.05, 'z': 0.04})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.05, 'z': 0.03})
+        # Index extended horizontally across forehead
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.06, 'z': 0.0})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.05, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.05, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.02, 'z': 0.05})
         return self._create_sign_data('Black', landmarks, 'adjective',
                                       motion='across', body_region='forehead')
     
     def _create_sign_white(self) -> Dict:
-        """White - Open hand from chest outward"""
-        start_hand = self._create_base_hand(0.5, 0.45)
-        end_hand = self._create_base_hand(0.5, 0.5)
-        for lm in end_hand:
-            lm['z'] = 0.0
-        return self._create_animated_sign('White', start_hand, end_hand,
+        """White - Open hand pulling away from chest"""
+        landmarks_start = []
+        landmarks_end = []
+        x, y = 0.5, 0.48
+        # Start - hand on chest
+        landmarks_start.append({'x': x, 'y': y, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.07, 'y': y - 0.02, 'z': 0.05})
+        landmarks_start.append({'x': x - 0.10, 'y': y - 0.04, 'z': 0.08})
+        landmarks_start.append({'x': x - 0.12, 'y': y - 0.06, 'z': 0.10})
+        landmarks_start.append({'x': x - 0.13, 'y': y - 0.08, 'z': 0.10})
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks_start.append({'x': base_x, 'y': y - 0.07 - (j * 0.04), 'z': 0.08})
+        # End - hand pulled away
+        landmarks_end.append({'x': x, 'y': y + 0.05, 'z': 0.0})
+        landmarks_end.append({'x': x - 0.07, 'y': y + 0.03, 'z': 0.0})
+        landmarks_end.append({'x': x - 0.10, 'y': y + 0.01, 'z': 0.0})
+        landmarks_end.append({'x': x - 0.12, 'y': y - 0.01, 'z': 0.0})
+        landmarks_end.append({'x': x - 0.13, 'y': y - 0.03, 'z': 0.0})
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks_end.append({'x': base_x, 'y': y + 0.02 - (j * 0.04), 'z': 0.0})
+        return self._create_animated_sign('White', landmarks_start, landmarks_end,
                                           motion='outward', body_region='chest')
     
     def _create_sign_orange(self) -> Dict:
-        """Orange - Squeezing motion near chin"""
-        landmarks = self._create_fist(0.5, 0.38)
+        """Orange - Squeezing motion near chin (like squeezing orange)"""
+        landmarks = []
+        x, y = 0.5, 0.36
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb in squeezing position
+        landmarks.append({'x': x - 0.05, 'y': y - 0.03, 'z': 0.02})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.06, 'z': 0.04})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.09, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.11, 'z': 0.04})
+        # All fingers curved to meet thumb (squeezing)
+        for i, offset in enumerate([-0.02, 0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x - 0.02, 'y': y - 0.09, 'z': 0.03})
+            landmarks.append({'x': base_x - 0.03, 'y': y - 0.11, 'z': 0.05})
+            landmarks.append({'x': base_x - 0.03, 'y': y - 0.12, 'z': 0.04})
         return self._create_sign_data('Orange', landmarks, 'adjective',
                                       motion='squeezing', body_region='chin')
     
     def _create_sign_pink(self) -> Dict:
-        """Pink - P handshape on lips"""
-        landmarks = self._letter_p()
-        for lm in landmarks:
-            lm['y'] -= 0.1
+        """Pink - P handshape brushing lips downward"""
+        landmarks = []
+        x, y = 0.48, 0.34
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb out to side
+        landmarks.append({'x': x - 0.06, 'y': y - 0.03, 'z': 0.0})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.05, 'z': 0.0})
+        landmarks.append({'x': x - 0.13, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.06, 'z': 0.0})
+        # Index pointing down (P shape)
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.03, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.08, 'z': 0.0})
+        # Middle also pointing down
+        landmarks.append({'x': x + 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x + 0.02, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x + 0.02, 'y': y + 0.03, 'z': 0.0})
+        landmarks.append({'x': x + 0.02, 'y': y + 0.08, 'z': 0.0})
+        # Ring and pinky curled
+        for i, offset in enumerate([0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.05, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.05, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.02, 'z': 0.05})
         return self._create_sign_data('Pink', landmarks, 'adjective',
                                       motion='brushing', body_region='lips')
     
     def _create_sign_grey(self) -> Dict:
-        """Grey - Open hands passing through each other"""
-        landmarks = self._create_base_hand(0.5, 0.5)
+        """Grey - Open hands weaving through each other"""
+        landmarks = []
+        x, y = 0.5, 0.50
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb spread wide
+        landmarks.append({'x': x - 0.09, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.18, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.21, 'y': y - 0.08, 'z': 0.0})
+        # Fingers spread wide for weaving
+        for i, offset in enumerate([-0.05, 0.0, 0.05, 0.10]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.08 - (j * 0.05), 'z': 0.02 if j % 2 == 0 else -0.02})
         return self._create_sign_data('Grey', landmarks, 'adjective',
                                       motion='passing', two_hands=True)
     
     def _create_sign_colour(self) -> Dict:
-        """Colour - Wiggling fingers at chin"""
-        landmarks = self._create_base_hand(0.5, 0.38)
+        """Colour - Wiggling fingers at chin level"""
+        landmarks = []
+        x, y = 0.5, 0.38
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended
+        landmarks.append({'x': x - 0.08, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.12, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.17, 'y': y - 0.08, 'z': 0.0})
+        # Fingers spread and wiggling (staggered z positions)
+        for i, offset in enumerate([-0.04, 0.0, 0.04, 0.08]):
+            base_x = x + offset
+            z_offset = 0.02 if i % 2 == 0 else -0.02
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y - 0.07 - (j * 0.045), 'z': z_offset * (j + 1) / 4})
         return self._create_sign_data('Colour', landmarks, 'noun',
                                       motion='wiggling', body_region='chin')
     
     # ============ DAY SIGNS ============
     
     def _create_sign_day(self, day: str) -> Dict:
-        """Day of week signs - Letter initialization"""
-        letter_map = {
-            'Monday': 'M', 'Tuesday': 'T', 'Wednesday': 'W',
-            'Thursday': 'H', 'Friday': 'F', 'Saturday': 'S', 'Sunday': 'S'
+        """Day of week signs - Each has unique hand configuration"""
+        landmarks = []
+        x, y = 0.5, 0.45
+        
+        # Different configurations for each day
+        day_configs = {
+            'Monday': {'thumb_angle': 0.0, 'finger_spread': 0.03, 'curl': 0.0},
+            'Tuesday': {'thumb_angle': 0.02, 'finger_spread': 0.035, 'curl': 0.01},
+            'Wednesday': {'thumb_angle': 0.04, 'finger_spread': 0.04, 'curl': 0.02},
+            'Thursday': {'thumb_angle': 0.06, 'finger_spread': 0.032, 'curl': 0.03},
+            'Friday': {'thumb_angle': 0.08, 'finger_spread': 0.038, 'curl': 0.0},
+            'Saturday': {'thumb_angle': 0.10, 'finger_spread': 0.042, 'curl': 0.01},
+            'Sunday': {'thumb_angle': 0.12, 'finger_spread': 0.045, 'curl': 0.02}
         }
-        letter = letter_map.get(day, 'D')
-        landmarks = self._create_letter_sign(letter)['keyframes'][0]['right_hand']
+        config = day_configs.get(day, day_configs['Monday'])
+        
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb with varying angle
+        landmarks.append({'x': x - 0.06 - config['thumb_angle'], 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.10 - config['thumb_angle'], 'y': y - 0.05, 'z': 0.0})
+        landmarks.append({'x': x - 0.13 - config['thumb_angle'], 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.15 - config['thumb_angle'], 'y': y - 0.10, 'z': 0.0})
+        # Fingers with varying spread
+        spread = config['finger_spread']
+        curl = config['curl']
+        for i, offset in enumerate([-spread, 0.0, spread, spread * 2]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({
+                    'x': base_x + (j * 0.005),
+                    'y': y - 0.08 - (j * 0.045),
+                    'z': curl * (j / 3)
+                })
         return self._create_sign_data(day, landmarks, 'time',
                                       motion='circular')
     
     def _create_sign_today(self) -> Dict:
-        """Today - Both hands down motion"""
-        landmarks = self._create_base_hand(0.5, 0.5)
+        """Today - Both hands pointing down emphatically"""
+        landmarks = []
+        x, y = 0.5, 0.50
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb alongside
+        landmarks.append({'x': x - 0.06, 'y': y + 0.02, 'z': 0.01})
+        landmarks.append({'x': x - 0.08, 'y': y + 0.05, 'z': 0.01})
+        landmarks.append({'x': x - 0.09, 'y': y + 0.08, 'z': 0.01})
+        landmarks.append({'x': x - 0.09, 'y': y + 0.10, 'z': 0.01})
+        # All fingers pointing downward
+        for i, offset in enumerate([-0.03, 0.01, 0.05, 0.09]):
+            base_x = x + offset
+            for j in range(4):
+                landmarks.append({'x': base_x, 'y': y + 0.02 + (j * 0.05), 'z': 0.0})
         return self._create_sign_data('Today', landmarks, 'time',
                                       motion='downward', two_hands=True)
     
     # ============ PRONOUN SIGNS ============
     
     def _create_sign_i(self) -> Dict:
-        """I - Point to self (chest)"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        # Point toward chest
-        landmarks[8]['z'] = 0.05
+        """I - Index pointing to self/chest"""
+        landmarks = []
+        x, y = 0.52, 0.48
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index pointing toward self (toward center/chest)
+        landmarks.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.12, 'z': 0.06})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.15, 'z': 0.10})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.17, 'z': 0.12})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('I', landmarks, 'pronoun',
                                       body_region='chest')
     
     def _create_sign_you(self) -> Dict:
-        """You - Point outward"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
+        """You - Index pointing outward/forward"""
+        landmarks = []
+        x, y = 0.5, 0.45
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index pointing forward (negative z)
+        landmarks.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.12, 'z': -0.04})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.16, 'z': -0.08})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.20, 'z': -0.12})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('You', landmarks, 'pronoun',
                                       motion='pointing_out')
     
     def _create_sign_he(self) -> Dict:
-        """He - Point to side"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['x'] += 0.1
+        """He - Index pointing to the right side"""
+        landmarks = []
+        x, y = 0.55, 0.42
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index pointing to the right
+        landmarks.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.04, 'y': y - 0.09, 'z': 0.0})
+        landmarks.append({'x': x + 0.10, 'y': y - 0.09, 'z': 0.0})
+        landmarks.append({'x': x + 0.16, 'y': y - 0.09, 'z': 0.0})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('He', landmarks, 'pronoun',
                                       motion='pointing_side')
     
     def _create_sign_she(self) -> Dict:
-        """She - Point to other side"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['x'] -= 0.1
+        """She - Index pointing to the left side"""
+        landmarks = []
+        x, y = 0.45, 0.42
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index pointing to the left
+        landmarks.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.09, 'z': 0.0})
+        landmarks.append({'x': x - 0.14, 'y': y - 0.09, 'z': 0.0})
+        landmarks.append({'x': x - 0.20, 'y': y - 0.09, 'z': 0.0})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('She', landmarks, 'pronoun',
                                       motion='pointing_side')
     
     def _create_sign_it(self) -> Dict:
-        """It - Point forward/down"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['y'] += 0.05
+        """It - Index pointing downward"""
+        landmarks = []
+        x, y = 0.5, 0.48
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb tucked
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index pointing downward
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.0, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y + 0.12, 'z': 0.0})
+        # Other fingers curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('It', landmarks, 'pronoun',
                                       motion='pointing_down')
     
     # ============ OTHER SIGNS ============
     
     def _create_sign_blind(self) -> Dict:
-        """Blind - V fingers over eyes"""
-        landmarks = self._create_sign_2()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['y'] -= 0.2
+        """Blind - V fingers (index and middle) covering eyes"""
+        landmarks = []
+        x, y = 0.5, 0.26
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb curled
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index and middle forming V over eyes
+        landmarks.append({'x': x - 0.04, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.14, 'z': 0.02})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.18, 'z': 0.03})
+        landmarks.append({'x': x - 0.10, 'y': y - 0.21, 'z': 0.03})
+        landmarks.append({'x': x + 0.0, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x + 0.02, 'y': y - 0.14, 'z': 0.02})
+        landmarks.append({'x': x + 0.04, 'y': y - 0.18, 'z': 0.03})
+        landmarks.append({'x': x + 0.06, 'y': y - 0.21, 'z': 0.03})
+        # Ring and pinky curled
+        for i, offset in enumerate([0.04, 0.08]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
         return self._create_sign_data('Blind', landmarks, 'adjective',
                                       facial='neutral', body_region='eyes')
     
     def _create_sign_deaf(self) -> Dict:
-        """Deaf - Point to ear, then close"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['x'] += 0.1
-            lm['y'] -= 0.15
+        """Deaf - Index touching ear then closing to fist"""
+        landmarks = []
+        x, y = 0.62, 0.28
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb along side
+        landmarks.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.02})
+        landmarks.append({'x': x - 0.06, 'y': y - 0.04, 'z': 0.03})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.06, 'z': 0.03})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.08, 'z': 0.03})
+        # Index pointing at ear
+        landmarks.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.13, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.17, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.20, 'z': 0.0})
+        # Other fingers slightly curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.10, 'z': 0.02})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.09, 'z': 0.04})
+            landmarks.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.03})
         return self._create_sign_data('Deaf', landmarks, 'adjective',
                                       motion='touching', body_region='ear')
     
     def _create_sign_dream(self) -> Dict:
-        """Dream - Finger from forehead moving away"""
-        start_hand = self._create_sign_1()['keyframes'][0]['right_hand']
-        end_hand = [lm.copy() for lm in start_hand]
-        for lm in start_hand:
-            lm['y'] -= 0.2
-        for lm in end_hand:
-            lm['y'] -= 0.1
-            lm['x'] += 0.1
-        return self._create_animated_sign('Dream', start_hand, end_hand,
+        """Dream - Index finger spiraling away from forehead"""
+        landmarks_start = []
+        landmarks_end = []
+        x, y = 0.52, 0.25
+        # Start position - finger at forehead
+        landmarks_start.append({'x': x, 'y': y, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.04, 'y': y - 0.02, 'z': 0.03})
+        landmarks_start.append({'x': x - 0.05, 'y': y - 0.04, 'z': 0.05})
+        landmarks_start.append({'x': x - 0.04, 'y': y - 0.06, 'z': 0.05})
+        landmarks_start.append({'x': x - 0.02, 'y': y - 0.07, 'z': 0.04})
+        # Index extended
+        landmarks_start.append({'x': x - 0.02, 'y': y - 0.08, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.02, 'y': y - 0.13, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.02, 'y': y - 0.17, 'z': 0.0})
+        landmarks_start.append({'x': x - 0.02, 'y': y - 0.20, 'z': 0.0})
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks_start.append({'x': base_x, 'y': y - 0.06, 'z': 0.0})
+            landmarks_start.append({'x': base_x, 'y': y - 0.08, 'z': 0.04})
+            landmarks_start.append({'x': base_x + 0.01, 'y': y - 0.06, 'z': 0.06})
+            landmarks_start.append({'x': base_x + 0.01, 'y': y - 0.03, 'z': 0.05})
+        
+        # End position - finger moved away and up (dream floating away)
+        x2, y2 = x + 0.12, y - 0.08
+        landmarks_end.append({'x': x2, 'y': y2, 'z': 0.0})
+        landmarks_end.append({'x': x2 - 0.04, 'y': y2 - 0.02, 'z': 0.03})
+        landmarks_end.append({'x': x2 - 0.05, 'y': y2 - 0.04, 'z': 0.05})
+        landmarks_end.append({'x': x2 - 0.04, 'y': y2 - 0.06, 'z': 0.05})
+        landmarks_end.append({'x': x2 - 0.02, 'y': y2 - 0.07, 'z': 0.04})
+        landmarks_end.append({'x': x2 - 0.02, 'y': y2 - 0.08, 'z': 0.0})
+        landmarks_end.append({'x': x2 - 0.02, 'y': y2 - 0.13, 'z': 0.0})
+        landmarks_end.append({'x': x2 - 0.02, 'y': y2 - 0.17, 'z': 0.0})
+        landmarks_end.append({'x': x2 - 0.02, 'y': y2 - 0.20, 'z': 0.0})
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x2 + offset
+            landmarks_end.append({'x': base_x, 'y': y2 - 0.06, 'z': 0.0})
+            landmarks_end.append({'x': base_x, 'y': y2 - 0.08, 'z': 0.04})
+            landmarks_end.append({'x': base_x + 0.01, 'y': y2 - 0.06, 'z': 0.06})
+            landmarks_end.append({'x': base_x + 0.01, 'y': y2 - 0.03, 'z': 0.05})
+        return self._create_animated_sign('Dream', landmarks_start, landmarks_end,
                                           motion='rising', facial='calm',
                                           body_region='forehead')
     
     def _create_sign_loud(self) -> Dict:
-        """Loud - Hands at ears, moving outward"""
-        landmarks = self._create_base_hand(0.55, 0.3)
+        """Loud - Hands at ears expanding outward"""
+        landmarks = []
+        x, y = 0.58, 0.28
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb extended
+        landmarks.append({'x': x - 0.08, 'y': y - 0.02, 'z': 0.0})
+        landmarks.append({'x': x - 0.12, 'y': y - 0.04, 'z': 0.0})
+        landmarks.append({'x': x - 0.15, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.17, 'y': y - 0.08, 'z': 0.0})
+        # Fingers spread wide (explosion/loud effect)
+        for i, offset in enumerate([-0.05, 0.0, 0.05, 0.10]):
+            base_x = x + offset
+            angle = (i - 1.5) * 0.05
+            for j in range(4):
+                landmarks.append({
+                    'x': base_x + (j * angle),
+                    'y': y - 0.08 - (j * 0.05),
+                    'z': 0.0
+                })
         return self._create_sign_data('Loud', landmarks, 'adjective',
                                       motion='expanding', body_region='ears',
                                       two_hands=True)
     
     def _create_sign_quiet(self) -> Dict:
-        """Quiet - Index on lips, then hands down"""
-        landmarks = self._create_sign_1()['keyframes'][0]['right_hand']
-        for lm in landmarks:
-            lm['y'] -= 0.12
+        """Quiet - Index finger on lips (shushing gesture)"""
+        landmarks = []
+        x, y = 0.5, 0.32
+        landmarks.append({'x': x, 'y': y, 'z': 0.0})  # Wrist
+        # Thumb alongside
+        landmarks.append({'x': x - 0.05, 'y': y - 0.02, 'z': 0.03})
+        landmarks.append({'x': x - 0.07, 'y': y - 0.04, 'z': 0.05})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.06, 'z': 0.06})
+        landmarks.append({'x': x - 0.08, 'y': y - 0.08, 'z': 0.06})
+        # Index extended vertically (at lips)
+        landmarks.append({'x': x - 0.02, 'y': y - 0.06, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.11, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.15, 'z': 0.0})
+        landmarks.append({'x': x - 0.02, 'y': y - 0.18, 'z': 0.0})
+        # Other fingers tightly curled
+        for i, offset in enumerate([0.02, 0.06, 0.10]):
+            base_x = x + offset
+            landmarks.append({'x': base_x, 'y': y - 0.05, 'z': 0.0})
+            landmarks.append({'x': base_x, 'y': y - 0.07, 'z': 0.05})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.05, 'z': 0.07})
+            landmarks.append({'x': base_x + 0.02, 'y': y - 0.02, 'z': 0.06})
         return self._create_sign_data('Quiet', landmarks, 'adjective',
                                       facial='calm', motion='downward',
                                       body_region='lips')
